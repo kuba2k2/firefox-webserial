@@ -1,0 +1,35 @@
+{
+	"manifest_version": 2,
+	"name": "WebSerial for Firefox",
+	"version": "0.0.0",
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "webserial@kuba2k2.github.io"
+		}
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"*://*/*"
+			],
+			"js": [
+				"dist/webserial.content.js"
+			],
+			"all_frames": true,
+			"run_at": "document_start"
+		}
+	],
+	"background": {
+		"scripts": [
+			"dist/webserial.background.js"
+		],
+		"persistent": true,
+		"type": "module"
+	},
+	"permissions": [
+		"*://*/*",
+		"nativeMessaging",
+		"storage"
+	],
+	"content_security_policy": "default-src 'self' 'unsafe-inline'; script-src 'self' http://localhost:8097; connect-src 'self' ws://localhost:8097"
+}

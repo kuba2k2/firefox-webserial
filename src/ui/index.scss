@@ -1,0 +1,24 @@
+body {
+	width: 100%;
+	user-select: none;
+}
+
+#root {
+	padding: 0 12px;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+small,
+li {
+	padding-block: 4px;
+	margin: 5px 0 3px;
+}
+
+button {
+	margin: 0;
+}
