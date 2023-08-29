@@ -1,0 +1,12 @@
+name: Push (dev), Pull Request
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+jobs:
+  lint-node:
+    name: Run Node.js lint
+    uses: kuba2k2/kuba2k2/.github/workflows/lint-node.yml@master
+  lint-clang:
+    name: Run Clang lint
+    uses: kuba2k2/kuba2k2/.github/workflows/lint-clang.yml@master

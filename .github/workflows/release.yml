@@ -1,0 +1,53 @@
+name: Release
+on:
+  push:
+    tags: ["v*.*.*"]
+jobs:
+  lint-node:
+    name: Run Node.js lint
+    uses: kuba2k2/kuba2k2/.github/workflows/lint-node.yml@master
+  build-node:
+    name: Build Node.js project
+    needs:
+      - lint-node
+    uses: kuba2k2/kuba2k2/.github/workflows/build-node.yml@master
+    with:
+      files: |
+        dist/
+        manifest.json
+        LICENSE
+      output-aritfact: firefox-webserial
+
+  lint-clang:
+    name: Run Clang lint
+    uses: kuba2k2/kuba2k2/.github/workflows/lint-clang.yml@master
+  build-pio:
+    name: Build PlatformIO project
+    needs:
+      - lint-clang
+    uses: kuba2k2/kuba2k2/.github/workflows/build-pio.yml@master
+    strategy:
+      matrix:
+        os:
+          - runs-on: windows-latest
+            pio-env: windows_x86
+            output-bin: firefox-webserial.exe
+    with:
+      runs-on: ${{ matrix.os.runs-on }}
+      project-directory: ./native/
+      args: -e ${{ matrix.os.pio-env }}
+      files: |
+        native/.pio/build/${{ matrix.os.pio-env }}/${{ matrix.os.output-bin }}
+      output-artifact: native-${{ matrix.os.pio-env }}
+  build-nsis:
+    name: Build NSIS installer
+    needs:
+      - build-pio
+    uses: kuba2k2/kuba2k2/.github/workflows/build-nsis.yml@master
+    with:
+      input-artifact: native-windows_x86
+      input-path: native/install/
+      script-file: native/install/windows_x86.nsi
+      files: |
+        native/install/firefox-webserial-v*.exe
+      output-artifact: firefox-webserial
