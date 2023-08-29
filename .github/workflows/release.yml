@@ -16,7 +16,7 @@ jobs:
         dist/
         manifest.json
         LICENSE
-      output-aritfact: firefox-webserial
+      output-artifact: firefox-webserial
 
   lint-clang:
     name: Run Clang lint
