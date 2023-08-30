@@ -5,7 +5,7 @@ import {
 	resolvePromiseFromBackground,
 } from "./messaging/promises"
 import { SerialPortAuth, SerialPortData } from "./serial/types"
-import { BackgroundRequest } from "./types"
+import { BackgroundRequest } from "./utils/types"
 
 async function getOriginAuth(origin: string): Promise<SerialPortAuth> {
 	const { originAuth } = await browser.storage.local.get("originAuth")

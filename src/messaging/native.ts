@@ -1,5 +1,6 @@
-import { rejectPromise, resolvePromise } from "../messaging"
-import { NativeRequest } from "../types"
+import { debugRx, debugTx } from "../utils/logging"
+import { rejectPromise, resolvePromise } from "."
+import { NativeRequest } from "../utils/types"
 import { keepPromise } from "./promises"
 
 let globalPort: browser.runtime.Port = undefined
@@ -17,7 +18,7 @@ function getNativePort(): browser.runtime.Port {
 	if (newPort.error != null) throw newPort.error
 
 	newPort.onMessage.addListener(async (message: RawNativeResponse) => {
-		// console.log(" <- NATIVE/IO:", message)
+		debugRx("NATIVE", message)
 		if (!message.id) return
 		if (message.data !== undefined)
 			await resolvePromise(message.id, message.data)
@@ -39,7 +40,7 @@ export async function sendToNative(message: NativeRequest): Promise<any> {
 	const [id, promise]: [string, Promise<any>] = keepPromise()
 	const port = getNativePort()
 	message.id = id
+	debugTx("NATIVE", message)
 	port.postMessage(message)
-	// console.log(" -> NATIVE/IO:", message)
 	return await promise
 }

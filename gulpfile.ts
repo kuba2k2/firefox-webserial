@@ -39,7 +39,7 @@ function js(debug?: boolean, src?: string) {
 	const sources = {
 		"background": "webserial.background",
 		"content": "webserial.content",
-		"page": "webserial.page",
+		"polyfill": "webserial.polyfill",
 		"ui": "webserial.ui",
 	}
 

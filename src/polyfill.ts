@@ -5,6 +5,7 @@ import { SerialSource } from "./serial/source"
 import { SerialOpcode, SerialPortData, SerialTransport } from "./serial/types"
 import { SerialWebSocket } from "./serial/websocket"
 import { pack } from "python-struct"
+import { debugLog } from "./utils/logging"
 
 export class SerialPort extends EventTarget {
 	onconnect: EventListener
@@ -83,6 +84,14 @@ export class SerialPort extends EventTarget {
 	}
 
 	public async open(options: SerialOptions): Promise<void> {
+		debugLog(
+			"SERIAL",
+			"open",
+			"options:",
+			options,
+			"transport:",
+			this.transport_
+		)
 		if (this.transport_ !== null && this.transport_.connected)
 			throw new DOMException(
 				"The port is already open.",
@@ -155,6 +164,7 @@ export class SerialPort extends EventTarget {
 	}
 
 	public async close(): Promise<void> {
+		debugLog("SERIAL", "close", "transport:", this.transport_)
 		if (this.transport_ === null)
 			throw new DOMException(
 				"The port is already closed.",
@@ -188,28 +198,45 @@ export class SerialPort extends EventTarget {
 	}
 
 	public async setSignals(signals: SerialOutputSignals): Promise<void> {
-		this.outputSignals_ = { ...this.outputSignals_, ...signals }
+		const {
+			dataTerminalReady: oldDTR,
+			requestToSend: oldRTS,
+			break: oldBRK,
+		} = this.outputSignals_
+		const {
+			dataTerminalReady: newDTR,
+			requestToSend: newRTS,
+			break: newBRK,
+		} = signals
+
 		if (
-			signals.dataTerminalReady !== undefined ||
-			signals.requestToSend !== undefined
+			(newDTR !== undefined && oldDTR !== newDTR) ||
+			(newRTS !== undefined && oldRTS !== newRTS)
 		) {
+			debugLog(
+				"SERIAL",
+				"signals",
+				`DTR: ${newDTR ?? oldDTR}, RTS: ${newRTS ?? oldRTS}`
+			)
 			await this.transport_.send(
 				pack("<BBB", [
 					SerialOpcode.WSM_SET_SIGNALS,
-					signals.dataTerminalReady,
-					signals.requestToSend,
+					newDTR ?? oldDTR,
+					newRTS ?? oldRTS,
 				])
 			)
 		}
-		if (signals.break !== undefined) {
+		if (newBRK !== undefined && oldBRK !== newBRK) {
 			await this.transport_.send(
 				pack("<B", [
-					signals.break
+					newBRK ?? oldBRK
 						? SerialOpcode.WSM_START_BREAK
 						: SerialOpcode.WSM_END_BREAK,
 				])
 			)
 		}
+
+		this.outputSignals_ = { ...this.outputSignals_, ...signals }
 	}
 
 	public async getSignals(): Promise<SerialInputSignals> {

@@ -1,4 +1,4 @@
-import { PopupRequest } from "../types"
+import { PopupRequest } from "../utils/types"
 
 export type CommonProps = {
 	resolve: (value: any) => void

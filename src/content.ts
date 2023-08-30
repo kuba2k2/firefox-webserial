@@ -6,7 +6,7 @@ window.wrappedJSObject.navigator.serial = cloneInto({}, window.navigator, {})
 document.addEventListener("readystatechange", () => {
 	if (document.readyState == "interactive") {
 		const script = document.createElement("script")
-		script.src = browser.runtime.getURL("dist/webserial.page.js")
+		script.src = browser.runtime.getURL("dist/webserial.polyfill.js")
 		document.head.prepend(script)
 	}
 })

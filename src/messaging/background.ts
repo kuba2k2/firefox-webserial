@@ -1,4 +1,4 @@
-import { BackgroundRequest } from "../types"
+import { BackgroundRequest } from "../utils/types"
 
 export async function sendToBackground(
 	message: BackgroundRequest

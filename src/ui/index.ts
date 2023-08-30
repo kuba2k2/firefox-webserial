@@ -2,7 +2,7 @@ import React from "react"
 import { createRoot } from "react-dom/client"
 import { extendPromise, rejectPromise, resolvePromise } from "../messaging"
 import { SerialPortData } from "../serial/types"
-import { PopupRequest } from "../types"
+import { PopupRequest } from "../utils/types"
 import { PortChooser } from "./PortChooser"
 
 async function renderAndWait<T>(

@@ -1,8 +1,5 @@
+import { debugRx, debugTx } from "../utils/logging"
 import { SerialOpcode, SerialTransport } from "./types"
-
-function buf2hex(data: Uint8Array) {
-	return [...data].map((x) => x.toString(16).padStart(2, "0")).join(" ")
-}
 
 export class SerialWebSocket implements SerialTransport {
 	private ws_: WebSocket | null = null
@@ -44,7 +41,7 @@ export class SerialWebSocket implements SerialTransport {
 
 	private async receive(ev: MessageEvent<ArrayBuffer>) {
 		const data = new Uint8Array(ev.data)
-		// console.log(" <- NATIVE/WS:", buf2hex(data))
+		debugRx("SOCKET", data)
 		if (data[0] == SerialOpcode.WSM_DATA) {
 			if (this.ondata) this.ondata(data.subarray(1))
 			return
@@ -90,7 +87,7 @@ export class SerialWebSocket implements SerialTransport {
 			this.resolve_ = resolve
 			this.reject_ = reject
 			this.ws_.send(msg.buffer)
-			// console.log(" -> NATIVE/WS:", buf2hex(msg))
+			debugTx("SOCKET", msg)
 		})
 
 		const timeout = setTimeout(() => {

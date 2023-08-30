@@ -1,12 +1,12 @@
-import { sendToBackground } from "./messaging/background"
-import { sendToNative } from "./messaging/native"
-import { sendToPopup } from "./messaging/popup"
+import { sendToBackground } from "./background"
+import { sendToNative } from "./native"
+import { sendToPopup } from "./popup"
 import {
 	extendPromiseFromBackground,
 	rejectPromiseFromBackground,
 	resolvePromiseFromBackground,
-} from "./messaging/promises"
-import { SerialPortData } from "./serial/types"
+} from "./promises"
+import { SerialPortData } from "../serial/types"
 
 export async function getPorts(origin: string): Promise<SerialPortData[]> {
 	return await sendToBackground({ action: "getPorts", origin })

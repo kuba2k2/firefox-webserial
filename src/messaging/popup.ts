@@ -1,5 +1,5 @@
-import { rejectPromise } from "../messaging"
-import { PopupRequest } from "../types"
+import { rejectPromise } from "."
+import { PopupRequest } from "../utils/types"
 import { keepPromise } from "./promises"
 
 const windows: { [key: number]: string } = {}
