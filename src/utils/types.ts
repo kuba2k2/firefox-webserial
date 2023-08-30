@@ -3,6 +3,7 @@ export type BackgroundRequest = {
 		| "getPorts"
 		| "requestPort"
 		| "listAvailablePorts"
+		| "clearAuthKeyCache"
 		| "extendPromise"
 		| "resolvePromise"
 		| "rejectPromise"

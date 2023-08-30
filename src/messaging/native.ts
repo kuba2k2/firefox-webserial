@@ -1,5 +1,5 @@
 import { debugRx, debugTx } from "../utils/logging"
-import { rejectPromise, resolvePromise } from "."
+import { clearAuthKeyCache, rejectPromise, resolvePromise } from "."
 import { NativeRequest } from "../utils/types"
 import { keepPromise } from "./promises"
 
@@ -11,11 +11,14 @@ type RawNativeResponse = {
 	error?: number
 }
 
-function getNativePort(): browser.runtime.Port {
+async function getNativePort(): Promise<browser.runtime.Port> {
 	if (globalPort != undefined && globalPort.error == null) return globalPort
 
 	const newPort = browser.runtime.connectNative("io.github.kuba2k2.webserial")
 	if (newPort.error != null) throw newPort.error
+
+	// clear local authKey cache, as the native app is starting fresh
+	await clearAuthKeyCache()
 
 	newPort.onMessage.addListener(async (message: RawNativeResponse) => {
 		debugRx("NATIVE", message)
@@ -38,7 +41,7 @@ function getNativePort(): browser.runtime.Port {
 
 export async function sendToNative(message: NativeRequest): Promise<any> {
 	const [id, promise]: [string, Promise<any>] = keepPromise()
-	const port = getNativePort()
+	const port = await getNativePort()
 	message.id = id
 	debugTx("NATIVE", message)
 	port.postMessage(message)

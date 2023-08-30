@@ -30,6 +30,10 @@ export async function listAvailablePorts(
 	})
 }
 
+export async function clearAuthKeyCache(): Promise<void> {
+	return await sendToBackground({ action: "clearAuthKeyCache" })
+}
+
 export async function choosePort(
 	origin: string,
 	options?: SerialPortRequestOptions
@@ -41,20 +45,14 @@ export async function extendPromise(
 	id: string,
 	timeoutMs: number
 ): Promise<void> {
-	if (window === (await browser.runtime.getBackgroundPage()))
-		return extendPromiseFromBackground(id, timeoutMs)
 	await sendToBackground({ action: "extendPromise", id, timeoutMs })
 }
 
 export async function resolvePromise(id: string, value: any): Promise<void> {
-	if (window === (await browser.runtime.getBackgroundPage()))
-		return resolvePromiseFromBackground(id, value)
 	await sendToBackground({ action: "resolvePromise", id, value })
 }
 
 export async function rejectPromise(id: string, reason?: any): Promise<void> {
-	if (window === (await browser.runtime.getBackgroundPage()))
-		return rejectPromiseFromBackground(id, reason)
 	await sendToBackground({ action: "rejectPromise", id, reason })
 }
 

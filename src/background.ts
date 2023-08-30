@@ -27,7 +27,7 @@ async function grantOriginAuth(
 	await browser.storage.local.set({ originAuth })
 }
 
-const authKeyCache: { [key: string]: string } = {}
+let authKeyCache: { [key: string]: string } = {}
 
 class MessageHandler {
 	/**
@@ -88,6 +88,16 @@ class MessageHandler {
 	}
 
 	/**
+	 * Clear local port authKey cache.
+	 *
+	 * ACCESS:
+	 * - Background Script (via sendNative())
+	 */
+	async clearAuthKeyCache() {
+		authKeyCache = {}
+	}
+
+	/**
 	 * ACCESS:
 	 * - Popup Script
 	 */
@@ -105,4 +115,12 @@ class MessageHandler {
 browser.runtime.onMessage.addListener(async (message: BackgroundRequest) => {
 	const handler = new MessageHandler()
 	return await handler[message.action](message)
+})
+
+browser.runtime.getBackgroundPage().then((window) => {
+	window.addEventListener("message", async (ev) => {
+		const handler = new MessageHandler()
+		const message: BackgroundRequest = ev.data
+		return await handler[message.action](message)
+	})
 })
