@@ -26,10 +26,9 @@ export type SerialPortAuth = {
 	}
 }
 
-export interface SerialTransport {
+export interface SerialTransport extends EventTarget {
 	connected: boolean
-	ondata?: (data: Uint8Array) => void
-	onclose?: () => void
+	sourceFeedData?: (data: Uint8Array) => void
 	connect(): Promise<void>
 	disconnect(): Promise<void>
 	send(msg: Uint8Array): Promise<Uint8Array>

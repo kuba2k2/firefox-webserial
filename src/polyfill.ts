@@ -6,6 +6,7 @@ import { SerialOpcode, SerialPortData, SerialTransport } from "./serial/types"
 import { SerialWebSocket } from "./serial/websocket"
 import { pack } from "python-struct"
 import { debugLog } from "./utils/logging"
+import { catchIgnore } from "./utils/utils"
 
 export class SerialPort extends EventTarget {
 	onconnect: EventListener
@@ -113,11 +114,7 @@ export class SerialPort extends EventTarget {
 			)
 
 		// close the socket if it's open somehow
-		try {
-			await this.close()
-		} catch {
-			this
-		}
+		await catchIgnore(this.close())
 
 		// assume 8-N-1 as defaults
 		if (options.dataBits === undefined) options.dataBits = 8
@@ -128,6 +125,9 @@ export class SerialPort extends EventTarget {
 			// connect & open the port
 			this.options_ = options
 			this.transport_ = new SerialWebSocket()
+			this.transport_.addEventListener("disconnect", async () => {
+				await catchIgnore(this.close())
+			})
 			await this.transport_.connect()
 			await this.transport_.send(
 				pack(`<B${this.port_.authKey.length + 1}s`, [
@@ -154,11 +154,8 @@ export class SerialPort extends EventTarget {
 			// indicate that the client is ready
 			await this.setSignals({ dataTerminalReady: true })
 		} catch (e) {
-			try {
-				await this.close()
-			} catch {
-				this
-			}
+			// close upon errors during opening, then throw the error
+			await catchIgnore(this.close())
 			throw e
 		}
 	}
@@ -178,20 +175,19 @@ export class SerialPort extends EventTarget {
 		this.readable_ = null
 		this.writable_ = null
 
-		try {
-			// indicate that the client is not ready
-			await this.setSignals({
+		// indicate that the client is not ready
+		await catchIgnore(
+			this.setSignals({
 				dataTerminalReady: false,
 				requestToSend: false,
 			})
+		)
 
-			// close & disconnect the port
-			await this.transport_.send(
-				pack("<B", [SerialOpcode.WSM_PORT_CLOSE])
-			)
-		} catch {
-			this
-		}
+		// close & disconnect the port
+		await catchIgnore(
+			this.transport_.send(pack("<B", [SerialOpcode.WSM_PORT_CLOSE]))
+		)
+
 		await this.transport_.disconnect()
 		this.transport_ = null
 		this.options_ = null

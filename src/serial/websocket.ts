@@ -1,22 +1,24 @@
-import { debugRx, debugTx } from "../utils/logging"
+import { debugLog, debugRx, debugTx } from "../utils/logging"
 import { SerialOpcode, SerialTransport } from "./types"
 
-export class SerialWebSocket implements SerialTransport {
+export class SerialWebSocket extends EventTarget implements SerialTransport {
 	private ws_: WebSocket | null = null
 
 	private promise_?: Promise<Uint8Array>
 	private resolve_?: (value: Uint8Array) => void
 	private reject_?: (reason?: any) => void
 
-	ondata?: (data: Uint8Array) => void
-	onclose?: () => void
+	sourceFeedData?: (data: Uint8Array) => void
 
 	public get connected(): boolean {
 		return this.ws_ !== null && this.ws_.readyState === WebSocket.OPEN
 	}
 
 	async connect(): Promise<void> {
+		debugLog("SOCKET", "state", "Connecting")
+
 		if (this.connected) await this.disconnect()
+
 		await new Promise((resolve, reject) => {
 			this.ws_ = new WebSocket("ws://localhost:23290")
 			this.ws_.binaryType = "arraybuffer"
@@ -24,12 +26,26 @@ export class SerialWebSocket implements SerialTransport {
 			this.ws_.onopen = resolve
 			this.ws_.onerror = reject
 		})
+
+		debugLog("SOCKET", "state", "Connected")
+		this.ws_.onerror = () => {
+			debugLog("SOCKET", "state", "WS error")
+			this.disconnect()
+		}
+		this.ws_.onclose = () => {
+			debugLog("SOCKET", "state", "WS close")
+			this.disconnect()
+		}
 	}
 
 	async disconnect(): Promise<void> {
-		this.ws_?.close()
-		this.ws_ = null
-		if (this.onclose) this.onclose()
+		if (this.reject_) this.reject_(new Error("Disconnecting"))
+		this.dispatchEvent(new Event("disconnect"))
+		if (this.ws_) {
+			this.ws_.close()
+			this.ws_ = null
+			debugLog("SOCKET", "state", "Disconnected")
+		}
 		this.clearPromise()
 	}
 
@@ -43,7 +59,7 @@ export class SerialWebSocket implements SerialTransport {
 		const data = new Uint8Array(ev.data)
 		debugRx("SOCKET", data)
 		if (data[0] == SerialOpcode.WSM_DATA) {
-			if (this.ondata) this.ondata(data.subarray(1))
+			if (this.sourceFeedData) this.sourceFeedData(data.subarray(1))
 			return
 		}
 		if (data[0] >= SerialOpcode.WSM_ERROR) {
@@ -91,9 +107,10 @@ export class SerialWebSocket implements SerialTransport {
 		})
 
 		const timeout = setTimeout(() => {
-			if (this.reject_) this.reject_(new Error("Timeout"))
+			if (this.reject_)
+				this.reject_(new Error("Timeout waiting for native response"))
 			this.clearPromise()
-		}, 1000)
+		}, 5000)
 
 		const response = await this.promise_
 		clearTimeout(timeout)

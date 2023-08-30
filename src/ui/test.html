@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>WebSerial playground</title>
+</head>
+
+<body>
+  <button onclick="requestPort()">port = await navigator.serial.requestPort()</button>
+  <button onclick="openPort()">await port.open({baudRate: 115200})</button>
+  <button onclick="closePort()">await port.close()</button>
+  <hr>
+  <button onclick="readable_()">port.readable_</button>
+  <button onclick="rlocked()">port.readable.locked</button>
+  <button onclick="readable2()">window.readable = port.readable</button>
+  <button onclick="r2locked()">window.readable.locked</button>
+  <hr>
+  <button onclick="writable_()">port.writable_</button>
+  <button onclick="wlocked()">port.writable.locked</button>
+  <hr>
+  <button onclick="readerGet()">reader = port.readable.getReader()</button>
+  <button onclick="rclosed()">reader.closed</button>
+  <button onclick="rcancel()">reader.cancel()</button>
+  <button onclick="rrelease()">reader.releaseLock()</button>
+  <button onclick="rread()">await reader.read()</button>
+
+  <script>
+    async function requestPort() {
+      console.log(window.port = await navigator.serial.requestPort())
+    }
+
+    async function openPort() {
+      console.log(await port.open({ baudRate: 115200 }))
+    }
+
+    async function closePort() {
+      console.log(await port.close())
+    }
+
+    async function readable_() {
+      console.log(port.readable_)
+    }
+
+    async function rlocked() {
+      console.log(port.readable.locked)
+    }
+
+    async function readable2() {
+      console.log(window.readable = port.readable)
+    }
+
+    async function r2locked() {
+      console.log(window.readable.locked)
+    }
+
+    async function writable_() {
+      console.log(port.writable_)
+    }
+
+    async function wlocked() {
+      console.log(port.writable.locked)
+    }
+
+    async function readerGet() {
+      console.log(window.reader = port.readable.getReader())
+    }
+
+    async function rclosed() {
+      console.log(reader.closed)
+    }
+
+    async function rcancel() {
+      console.log(await reader.cancel())
+    }
+
+    async function rrelease() {
+      console.log(reader.releaseLock())
+    }
+
+    async function rread() {
+      console.log(await reader.read())
+    }
+  </script>
+</body>
+
+</html>

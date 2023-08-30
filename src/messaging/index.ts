@@ -1,11 +1,6 @@
 import { sendToBackground } from "./background"
 import { sendToNative } from "./native"
 import { sendToPopup } from "./popup"
-import {
-	extendPromiseFromBackground,
-	rejectPromiseFromBackground,
-	resolvePromiseFromBackground,
-} from "./promises"
 import { SerialPortData } from "../serial/types"
 
 export async function getPorts(origin: string): Promise<SerialPortData[]> {

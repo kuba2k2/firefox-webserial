@@ -1,30 +1,40 @@
+import { debugLog } from "../utils/logging"
+import { catchIgnore } from "../utils/utils"
 import { SerialTransport } from "./types"
 
 export class SerialSource implements UnderlyingSource<Uint8Array> {
-	private transport_: SerialTransport
-	private onError_: () => void
-
 	type: undefined
+	controller: ReadableStreamController<Uint8Array> = null
 
-	public constructor(transport: SerialTransport, onError: () => void) {
-		this.transport_ = transport
-		this.onError_ = onError
+	public constructor(
+		private transport_: SerialTransport,
+		private onClose_: () => void
+	) {
 		// @ts-ignore
 		this.type = "bytes"
+		this.onDisconnect = this.onDisconnect.bind(this)
+		this.transport_.addEventListener("disconnect", this.onDisconnect)
+	}
+
+	onDisconnect() {
+		debugLog("STREAM", "source", "onDisconnect()")
+		this.cancel()
 	}
 
 	start(controller: ReadableStreamController<Uint8Array>) {
-		this.transport_.ondata = (data) => {
+		debugLog("STREAM", "source", "start()")
+		this.controller = controller
+		this.transport_.sourceFeedData = (data) => {
 			controller.enqueue(data)
-		}
-		this.transport_.onclose = () => {
-			controller.close()
-			this.transport_.onclose = null
 		}
 	}
 
 	cancel(_reason?: any) {
-		this.transport_.ondata = null
-		this.transport_.onclose = null
+		debugLog("STREAM", "source", "cancel()")
+		catchIgnore(this.controller?.close)
+		this.controller = null
+		this.transport_.removeEventListener("disconnect", this.onDisconnect)
+		this.transport_.sourceFeedData = null
+		this.onClose_()
 	}
 }
