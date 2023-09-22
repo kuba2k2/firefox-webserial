@@ -3,7 +3,7 @@ type ModuleType = "SERIAL" | "NATIVE" | "SOCKET" | "STREAM"
 // [log, rx, tx]
 const colors: Record<ModuleType, [string, string, string]> = {
 	SERIAL: ["#C62817", "#C62817", "#C62817"],
-	NATIVE: ["", "#5BC0DE", "#F0AD4E"],
+	NATIVE: ["#FA0064", "#5BC0DE", "#F0AD4E"],
 	SOCKET: ["#1ED760", "#5BC0DE", "#F0AD4E"],
 	STREAM: ["#FE5A00", "", ""],
 }

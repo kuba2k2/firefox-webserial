@@ -18,7 +18,7 @@ export type BackgroundRequest = {
 }
 
 export type NativeRequest = {
-	action?: "logMessage" | "listPorts" | "authGrant" | "authRevoke"
+	action?: "ping" | "listPorts" | "authGrant" | "authRevoke"
 	id?: string
 	port?: string
 }
