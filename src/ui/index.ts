@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client"
 import { extendPromise, rejectPromise, resolvePromise } from "../messaging"
 import { SerialPortData } from "../serial/types"
 import { PopupRequest } from "../utils/types"
-import { PortChooser } from "./PortChooser"
+import { PortChooser } from "./pages/PortChooser"
 
 async function renderAndWait<T>(
 	component: any,

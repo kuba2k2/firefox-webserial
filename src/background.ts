@@ -1,4 +1,5 @@
 import { choosePort, listPortsNative } from "./messaging"
+import { getNativeParamsFromBackground } from "./messaging/native"
 import {
 	extendPromiseFromBackground,
 	rejectPromiseFromBackground,
@@ -13,6 +14,17 @@ import {
 import { BackgroundRequest } from "./utils/types"
 
 class MessageHandler {
+	/**
+	 * Get native app state & parameters.
+	 *
+	 * ACCESS:
+	 * - Page Script (via Content Script)
+	 * - Popup Script
+	 */
+	async getNativeParams() {
+		return await getNativeParamsFromBackground()
+	}
+
 	/**
 	 * List authorized ports.
 	 *

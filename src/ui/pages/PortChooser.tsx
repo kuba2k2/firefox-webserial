@@ -1,35 +1,21 @@
 import React from "react"
-import styled from "styled-components"
-import { listAvailablePorts } from "../messaging"
-import { SerialPortData } from "../serial/types"
-import { CommonProps } from "./Common"
-import { Button } from "./components/Button"
-import { List } from "./components/List"
-
-const MessageContainer = styled.div`
-	position: relative;
-	min-height: 40px;
-	padding-right: 56px;
-`
-
-const ReloadButton = styled(Button)`
-	position: absolute;
-	top: 50%;
-	right: 0;
-	transform: translateY(-50%);
-`
-
-const ButtonContainer = styled.div`
-	position: absolute;
-	bottom: 12px;
-	right: 12px;
-`
-
-const ButtonSpacer = styled.span`
-	margin-right: 12px;
-`
+import { getNativeParams, listAvailablePorts } from "../../messaging"
+import { SerialPortData } from "../../serial/types"
+import { NativeParams } from "../../utils/types"
+import {
+	ButtonContainer,
+	ButtonMessage,
+	ButtonSpacer,
+	CommonProps,
+	MessageContainer,
+	ReloadButton,
+} from "../components/Common"
+import { NativeInfo } from "../components/NativeInfo"
+import { Button } from "../controls/Button"
+import { List } from "../controls/List"
 
 type PortChooserState = {
+	params: NativeParams | null
 	ports: SerialPortData[] | null
 	error?: any
 	active: number | null
@@ -41,7 +27,7 @@ export class PortChooser extends React.Component<
 > {
 	constructor(props: CommonProps) {
 		super(props)
-		this.state = { ports: null, active: null }
+		this.state = { params: null, ports: null, active: null }
 		this.handleItemClick = this.handleItemClick.bind(this)
 		this.handleRefresh = this.handleRefresh.bind(this)
 		this.handleOkClick = this.handleOkClick.bind(this)
@@ -53,13 +39,19 @@ export class PortChooser extends React.Component<
 	}
 
 	async handleRefresh() {
-		this.setState({ ports: null, active: null })
+		this.setState({ params: null, ports: null, active: null })
 		try {
+			const params = await getNativeParams()
+			this.setState({ params })
+			if (params.state !== "connected") {
+				this.setState({ ports: null })
+				return
+			}
 			const ports = await listAvailablePorts(
 				this.props.origin,
 				this.props.options
 			)
-			this.setState({ ports })
+			this.setState({ params, ports })
 		} catch (error) {
 			this.setState({ error })
 		}
@@ -99,6 +91,14 @@ export class PortChooser extends React.Component<
 
 				<hr />
 
+				{!this.state.params &&
+					!this.state.ports &&
+					!this.state.error && (
+						<small>Looking for serial ports...</small>
+					)}
+				{this.state.params && !this.state.ports && (
+					<small>Couldn't connect to native app</small>
+				)}
 				{this.state.ports && (
 					<List
 						items={this.state.ports.map(
@@ -111,9 +111,6 @@ export class PortChooser extends React.Component<
 				{this.state.ports && this.state.ports.length == 0 && (
 					<small>No serial ports found</small>
 				)}
-				{!this.state.ports && !this.state.error && (
-					<small>Looking for serial ports...</small>
-				)}
 				{this.state.error && (
 					<small>
 						Failed to enumerate serial ports:{" "}
@@ -122,6 +119,11 @@ export class PortChooser extends React.Component<
 				)}
 
 				<ButtonContainer>
+					<ButtonMessage>
+						{this.state.params && (
+							<NativeInfo {...this.state.params} />
+						)}
+					</ButtonMessage>
 					<Button text="Cancel" onClick={this.handleCancelClick} />
 					<ButtonSpacer />
 					<Button

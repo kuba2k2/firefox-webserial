@@ -1,8 +1,9 @@
-import { debugLog, debugRx, debugTx } from "../utils/logging"
-import { clearAuthKeyCache, rejectPromise, resolvePromise } from "."
-import { NativeRequest } from "../utils/types"
-import { keepPromise } from "./promises"
 import { v4 } from "uuid"
+import { clearAuthKeyCache, rejectPromise, resolvePromise } from "."
+import { debugLog, debugRx, debugTx } from "../utils/logging"
+import { NativeParams, NativeRequest } from "../utils/types"
+import { catchIgnore } from "../utils/utils"
+import { keepPromise } from "./promises"
 
 const NATIVE_PROTOCOL = 1
 
@@ -12,6 +13,10 @@ type RawNativeResponse = {
 	id?: string
 	data?: any
 	error?: number
+}
+
+let nativeParams: NativeParams = {
+	state: "checking",
 }
 
 async function getNativePort(): Promise<browser.runtime.Port> {
@@ -29,7 +34,12 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 	}
 	newPort.postMessage(pingRequest)
 
+	// update native params
+	nativeParams = { state: "checking" }
+
 	globalPort = await new Promise((resolve, reject) => {
+		let isOutdated = false
+
 		newPort.onMessage.addListener(async (message: RawNativeResponse) => {
 			if (!message.id) {
 				if (message.data) debugRx("NATIVE", message.data)
@@ -42,17 +52,23 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 				const version = message.data?.version
 				const protocol = message.data?.protocol
 				if (protocol !== NATIVE_PROTOCOL) {
-					newPort.disconnect()
 					const error = `Native protocol incompatible: expected v${NATIVE_PROTOCOL}, found v${protocol}`
 					debugLog("NATIVE", "onMessage", error)
+
+					nativeParams = { state: "outdated", version, protocol }
+					isOutdated = true
+					newPort.disconnect()
+
 					reject(new Error(error))
 					return
 				}
+				const wsPort = message.data?.wsPort
 				debugLog(
 					"NATIVE",
 					"onMessage",
-					`Connection successful: native v${version}`
+					`Connection successful: native v${version} @ port ${wsPort}`
 				)
+				nativeParams = { state: "connected", version, protocol, wsPort }
 				resolve(newPort)
 				return
 			}
@@ -67,12 +83,12 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 				)
 		})
 
-		newPort.onDisconnect.addListener((port) => {
+		newPort.onDisconnect.addListener(async (port) => {
 			debugLog("NATIVE", "onDisconnect", "Disconnected:", port.error)
-			if (globalPort) {
-				globalPort = null
-				reject(port.error)
-			}
+			if (isOutdated) return
+			globalPort = null
+			nativeParams = { state: "error" }
+			reject(port.error)
 		})
 	})
 
@@ -86,4 +102,10 @@ export async function sendToNative(message: NativeRequest): Promise<any> {
 	debugTx("NATIVE", message)
 	port.postMessage(message)
 	return await promise
+}
+
+export async function getNativeParamsFromBackground(): Promise<NativeParams> {
+	// ignore errors, which are reflected in nativeParams instead
+	await catchIgnore(getNativePort())
+	return nativeParams
 }

@@ -2,6 +2,11 @@ import { sendToBackground } from "./background"
 import { sendToNative } from "./native"
 import { sendToPopup } from "./popup"
 import { SerialPortData } from "../serial/types"
+import { NativeParams } from "../utils/types"
+
+export async function getNativeParams(): Promise<NativeParams> {
+	return await sendToBackground({ action: "getNativeParams", origin })
+}
 
 export async function getPorts(origin: string): Promise<SerialPortData[]> {
 	return await sendToBackground({ action: "getPorts", origin })

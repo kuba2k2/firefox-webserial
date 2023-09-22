@@ -1,5 +1,6 @@
 export type BackgroundRequest = {
 	action:
+		| "getNativeParams"
 		| "getPorts"
 		| "requestPort"
 		| "listAvailablePorts"
@@ -28,4 +29,11 @@ export type PopupRequest = {
 	// choosePort
 	origin?: string
 	options?: SerialPortRequestOptions
+}
+
+export type NativeParams = {
+	state: "checking" | "not-installed" | "error" | "outdated" | "connected"
+	version?: string
+	protocol?: number
+	wsPort?: number
 }
