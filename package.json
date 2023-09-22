@@ -19,7 +19,7 @@
 		"lint": "eslint . --ext .js,.jsx,.ts,.tsx",
 		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\"",
 		"format-check": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
-		"version": "cross-var replace '\\d+\\.\\d+\\.\\d+' $npm_package_version manifest.json native/install/windows_x86.nsi && git add .",
+		"version": "cross-var replace '\\d+\\.\\d+\\.\\d+' $npm_package_version manifest.json native/install/windows_x86.nsi native/src/version.h && git add .",
 		"build": "gulp build",
 		"build:dev": "gulp build:dev",
 		"watch": "gulp watch",

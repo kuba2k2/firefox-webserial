@@ -14,7 +14,7 @@ void websocket_start() {
 	evs.onclose	  = &websocket_on_close;
 	evs.onmessage = &websocket_on_message;
 
-	ws_socket(&evs, 23290, true, 1000);
+	ws_socket(&evs, WEBSOCKET_PORT, true, 1000);
 }
 
 void websocket_on_open(ws_cli_conn_t *conn) {

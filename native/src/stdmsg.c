@@ -22,8 +22,6 @@ void stdmsg_send_log(const char *fmt, ...) {
 	cJSON *message = cJSON_CreateObject();
 	if (message == NULL)
 		goto end;
-	if (cJSON_AddStringToObject(message, "action", "logMessage") == NULL)
-		goto end;
 	if (cJSON_AddStringToObject(message, "data", data) == NULL)
 		goto end;
 	stdmsg_write(message);
@@ -77,7 +75,28 @@ void stdmsg_parse(char *json) {
 	action = cJSON_GetStringValue(j_action);
 	id	   = cJSON_GetStringValue(j_id);
 
-	if (strcmp(action, "listPorts") == 0) {
+	if (strcmp(action, "ping") == 0) {
+		cJSON *data = cJSON_CreateObject();
+		if (data == NULL) {
+			error = 70;
+			goto error;
+		}
+		if (cJSON_AddStringToObject(data, "version", NATIVE_VERSION) == NULL) {
+			error = 71;
+			goto error;
+		}
+		if (cJSON_AddNumberToObject(data, "protocol", NATIVE_PROTOCOL) == NULL) {
+			error = 72;
+			goto error;
+		}
+		if (cJSON_AddNumberToObject(data, "wsPort", WEBSOCKET_PORT) == NULL) {
+			error = 73;
+			goto error;
+		}
+		stdmsg_send_json(id, data);
+	}
+
+	else if (strcmp(action, "listPorts") == 0) {
 		cJSON *data = serial_list_ports_json();
 		if (data == NULL) {
 			error = 60;
