@@ -1,18 +1,33 @@
 import React from "react"
+import styled from "styled-components"
 import { NativeParams } from "../../utils/types"
+
+const Text = styled.small`
+	margin: 0;
+	padding: 0;
+`
 
 export class NativeInfo extends React.Component<NativeParams> {
 	render() {
+		const version = browser.runtime.getManifest().version
 		switch (this.props.state) {
 			case "outdated":
 				return (
-					<small>
+					<Text>
+						Add-on version: v{version}
+						<br />
 						Native <b>outdated</b>: v{this.props.version}
-					</small>
+					</Text>
 				)
 
 			case "connected":
-				return <small>Native connected: v{this.props.version}</small>
+				return (
+					<Text>
+						Add-on version: v{version}
+						<br />
+						Native version: v{this.props.version}
+					</Text>
+				)
 
 			default:
 				return null

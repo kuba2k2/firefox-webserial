@@ -11,6 +11,7 @@ import {
 	ReloadButton,
 } from "../components/Common"
 import { NativeInfo } from "../components/NativeInfo"
+import { NativeInstaller } from "../components/NativeInstaller"
 import { Button } from "../controls/Button"
 import { List } from "../controls/List"
 
@@ -40,11 +41,10 @@ export class PortChooser extends React.Component<
 
 	async handleRefresh() {
 		this.setState({ params: null, ports: null, active: null })
+		const params = await getNativeParams()
 		try {
-			const params = await getNativeParams()
-			this.setState({ params })
 			if (params.state !== "connected") {
-				this.setState({ ports: null })
+				this.setState({ params, ports: null })
 				return
 			}
 			const ports = await listAvailablePorts(
@@ -53,7 +53,7 @@ export class PortChooser extends React.Component<
 			)
 			this.setState({ params, ports })
 		} catch (error) {
-			this.setState({ error })
+			this.setState({ params, error })
 		}
 	}
 
@@ -97,7 +97,7 @@ export class PortChooser extends React.Component<
 						<small>Looking for serial ports...</small>
 					)}
 				{this.state.params && !this.state.ports && (
-					<small>Couldn't connect to native app</small>
+					<NativeInstaller {...this.state.params} />
 				)}
 				{this.state.ports && (
 					<List

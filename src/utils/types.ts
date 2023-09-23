@@ -33,6 +33,7 @@ export type PopupRequest = {
 
 export type NativeParams = {
 	state: "checking" | "not-installed" | "error" | "outdated" | "connected"
+	error?: any
 	version?: string
 	protocol?: number
 	wsPort?: number

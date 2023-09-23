@@ -42,7 +42,7 @@ export async function startUI() {
 			await extendPromise(id, 5000)
 		}, 2000)
 
-		document.onblur = async () => {
+		document.onblur = () => {
 			window.close()
 		}
 

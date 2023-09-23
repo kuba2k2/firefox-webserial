@@ -5,7 +5,7 @@ import { NativeParams, NativeRequest } from "../utils/types"
 import { catchIgnore } from "../utils/utils"
 import { keepPromise } from "./promises"
 
-const NATIVE_PROTOCOL = 1
+const NATIVE_PROTOCOL = 2
 
 let globalPort: browser.runtime.Port = undefined
 
@@ -17,6 +17,11 @@ type RawNativeResponse = {
 
 let nativeParams: NativeParams = {
 	state: "checking",
+}
+
+function setNativeParams(params: NativeParams) {
+	nativeParams = params
+	debugLog("NATIVE", "setNativeParams", params)
 }
 
 async function getNativePort(): Promise<browser.runtime.Port> {
@@ -35,7 +40,7 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 	newPort.postMessage(pingRequest)
 
 	// update native params
-	nativeParams = { state: "checking" }
+	setNativeParams({ state: "checking" })
 
 	globalPort = await new Promise((resolve, reject) => {
 		let isOutdated = false
@@ -55,7 +60,7 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 					const error = `Native protocol incompatible: expected v${NATIVE_PROTOCOL}, found v${protocol}`
 					debugLog("NATIVE", "onMessage", error)
 
-					nativeParams = { state: "outdated", version, protocol }
+					setNativeParams({ state: "outdated", version, protocol })
 					isOutdated = true
 					newPort.disconnect()
 
@@ -68,7 +73,12 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 					"onMessage",
 					`Connection successful: native v${version} @ port ${wsPort}`
 				)
-				nativeParams = { state: "connected", version, protocol, wsPort }
+				setNativeParams({
+					state: "connected",
+					version,
+					protocol,
+					wsPort,
+				})
 				resolve(newPort)
 				return
 			}
@@ -87,7 +97,12 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 			debugLog("NATIVE", "onDisconnect", "Disconnected:", port.error)
 			if (isOutdated) return
 			globalPort = null
-			nativeParams = { state: "error" }
+
+			const error = `${port.error}`
+			if (error.includes("No such native application"))
+				setNativeParams({ state: "not-installed", error: port.error })
+			else setNativeParams({ state: "error", error: port.error })
+
 			reject(port.error)
 		})
 	})

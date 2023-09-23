@@ -13,6 +13,8 @@ import {
 } from "./utils/auth"
 import { BackgroundRequest } from "./utils/types"
 
+console.clear()
+
 class MessageHandler {
 	/**
 	 * Get native app state & parameters.
