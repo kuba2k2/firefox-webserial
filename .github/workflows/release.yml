@@ -58,6 +58,8 @@ jobs:
     needs:
       - build-node
       - build-nsis
+    permissions:
+      contents: write
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
