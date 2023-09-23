@@ -19,8 +19,12 @@ export class SerialWebSocket extends EventTarget implements SerialTransport {
 
 		if (this.connected) await this.disconnect()
 
+		const params = await WebSerialPolyfill.getNativeParams()
+		if (params.state !== "connected")
+			throw Error("Native application not connected")
+
 		await new Promise((resolve, reject) => {
-			this.ws_ = new WebSocket("ws://localhost:23290")
+			this.ws_ = new WebSocket(`ws://localhost:${params.wsPort}`)
 			this.ws_.binaryType = "arraybuffer"
 			this.ws_.onmessage = this.receive.bind(this)
 			this.ws_.onopen = resolve

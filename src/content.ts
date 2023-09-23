@@ -1,4 +1,4 @@
-import { getPorts, requestPort } from "./messaging"
+import { getNativeParams, getPorts, requestPort } from "./messaging"
 
 // @ts-ignore
 window.wrappedJSObject.navigator.serial = cloneInto({}, window.navigator, {})
@@ -26,6 +26,9 @@ function wrapPromise<T>(promise: Promise<T>): Promise<T> {
 }
 
 window.WebSerialPolyfill = {
+	getNativeParams: () => {
+		return wrapPromise(getNativeParams())
+	},
 	getPorts: () => {
 		return wrapPromise(getPorts(window.location.origin))
 	},
