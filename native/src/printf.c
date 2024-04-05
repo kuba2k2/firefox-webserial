@@ -13,3 +13,18 @@ int __wrap___mingw_vprintf(const char *format, va_list argv) {
 
 	return ret;
 }
+
+int __wrap_printf(const char *format, ...) {
+	va_list argv;
+	va_start(argv, format);
+	uint32_t len = vsnprintf(NULL, 0, format, argv);
+	va_end(argv);
+
+	char *buf = malloc(len + 1);
+	int ret	  = vsprintf(buf, format, argv);
+
+	stdmsg_send_log(buf);
+	free(buf);
+
+	return ret;
+}

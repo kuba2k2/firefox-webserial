@@ -19,7 +19,7 @@ const char *serial_auth_grant(const char *port_name);
 void serial_auth_revoke(const char *port_name);
 
 char *serial_port_get_id(struct sp_port *port);
-void serial_port_fix_details(struct sp_port *port, const char *id);
+__attribute__((weak)) void serial_port_fix_details(struct sp_port *port, const char *id);
 
 serial_port_t *serial_get_by_auth(const char *auth_key);
 serial_port_t *serial_get_by_conn(ws_cli_conn_t *conn);
