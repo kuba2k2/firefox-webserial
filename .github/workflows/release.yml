@@ -36,7 +36,7 @@ jobs:
           - runs-on: ubuntu-latest
             pio-env: linux_x86_64
             post-build: |
-              cd native/.pio/build/linux_x86_64/
+              cd .pio/build/linux_x86_64/
               cp firefox-webserial firefox-webserial-linux-x86-64
             output-bin: firefox-webserial-linux-x86-64
     with:
