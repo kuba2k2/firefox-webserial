@@ -33,12 +33,14 @@ jobs:
             pio-env: windows_x86
             post-build: ""
             output-bin: firefox-webserial.exe
+            output-artifact: firefox-webserial-windows_x86
           - runs-on: ubuntu-latest
             pio-env: linux_x86_64
             post-build: |
               cd .pio/build/linux_x86_64/
               cp firefox-webserial firefox-webserial-linux-x86-64
             output-bin: firefox-webserial-linux-x86-64
+            output-artifact: firefox-webserial
     with:
       runs-on: ${{ matrix.os.runs-on }}
       project-directory: ./native/
@@ -46,7 +48,7 @@ jobs:
       post-build: ${{ matrix.os.post-build }}
       files: |
         native/.pio/build/${{ matrix.os.pio-env }}/${{ matrix.os.output-bin }}
-      output-artifact: native-${{ matrix.os.pio-env }}
+      output-artifact: ${{ matrix.os.output-artifact }}
 
   build-nsis:
     name: Build NSIS installer
@@ -54,7 +56,7 @@ jobs:
       - build-pio
     uses: kuba2k2/kuba2k2/.github/workflows/build-nsis.yml@master
     with:
-      input-artifact: native-windows_x86
+      input-artifact: firefox-webserial-windows_x86
       input-path: native/install/
       script-file: native/install/windows_x86.nsi
       files: |
@@ -99,7 +101,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            src/*.exe
             src/firefox-webserial-*
             ${{ steps.sign.outputs.target }}
           fail_on_unmatched_files: false
