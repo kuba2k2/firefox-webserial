@@ -31,14 +31,23 @@ jobs:
         os:
           - runs-on: windows-latest
             pio-env: windows_x86
+            post-build: ""
             output-bin: firefox-webserial.exe
+          - runs-on: ubuntu-latest
+            pio-env: linux_x86_64
+            post-build: |
+              cd native/.pio/build/linux_x86_64/
+              cp firefox-webserial firefox-webserial-linux-x86-64
+            output-bin: firefox-webserial-linux-x86-64
     with:
       runs-on: ${{ matrix.os.runs-on }}
       project-directory: ./native/
       args: -e ${{ matrix.os.pio-env }}
+      post-build: ${{ matrix.os.post-build }}
       files: |
         native/.pio/build/${{ matrix.os.pio-env }}/${{ matrix.os.output-bin }}
       output-artifact: native-${{ matrix.os.pio-env }}
+
   build-nsis:
     name: Build NSIS installer
     needs:
@@ -91,6 +100,7 @@ jobs:
         with:
           files: |
             src/*.exe
+            src/firefox-webserial-*
             ${{ steps.sign.outputs.target }}
           fail_on_unmatched_files: false
           generate_release_notes: true
