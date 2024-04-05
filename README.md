@@ -24,21 +24,23 @@ The .exe file is an installer - just open it and install the native application.
 
 ### Installation on Linux
 
-Put the downloaded file in `~/.mozilla/native-messaging-hosts`, rename it to just `firefox-webserial`.
+1. Put the downloaded file in `~/.mozilla/native-messaging-hosts`
+2. Rename it to just `firefox-webserial`.
+3. Make it executable: `chmod +x ~/.mozilla/native-messaging-hosts/firefox-webserial`.
+4. Create a file named `io.github.kuba2k2.webserial.json` in the same directory, with this content:
+	```json
+	{
+		"name": "io.github.kuba2k2.webserial",
+		"description": "WebSerial for Firefox",
+		"path": "/home/USER/.mozilla/native-messaging-hosts/firefox-webserial",
+		"type": "stdio",
+		"allowed_extensions": ["webserial@kuba2k2.github.io"]
+	}
+	```
+	Adjust `/home/USER` to match your username.
+5. Restart the browser and use the extension.
 
-Create a file named `io.github.kuba2k2.webserial.json` in the same directory, with this content:
-
-```json
-{
-	"name": "io.github.kuba2k2.webserial",
-	"description": "WebSerial for Firefox",
-	"path": "/home/USER/.mozilla/native-messaging-hosts/firefox-webserial",
-	"type": "stdio",
-	"allowed_extensions": ["webserial@kuba2k2.github.io"]
-}
-```
-
-Adjust `/home/USER` to match your username.
+**NOTE:** On Alpine Linux (or other musl-based distros) you will need to have `gcompat` installed.
 
 ## Usage
 
