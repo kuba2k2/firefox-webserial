@@ -35,10 +35,17 @@ cJSON *serial_list_ports_json() {
 
 		const char *name = sp_get_port_name(port);
 		cJSON_AddStringToObject(item, "name", name);
-		const char *description = sp_get_port_description(port);
-		cJSON_AddStringToObject(item, "description", description);
 		enum sp_transport transport = sp_get_port_transport(port);
 		cJSON_AddStringToObject(item, "transport", SP_TRANSPORT_STR[transport]);
+
+		if (serial_port_get_description != NULL) {
+			char *description = serial_port_get_description(port);
+			cJSON_AddStringToObject(item, "description", description);
+			free(description);
+		} else {
+			const char *description = sp_get_port_description(port);
+			cJSON_AddStringToObject(item, "description", description);
+		}
 
 		switch (transport) {
 			case SP_TRANSPORT_NATIVE:

@@ -66,4 +66,24 @@ char *serial_port_get_id(struct sp_port *port) {
 	}
 }
 
+char *serial_port_get_description(struct sp_port *port) {
+	const char *name		= sp_get_port_name(port);
+	const char *description = sp_get_port_description(port);
+
+	if (strstr(name, "/dev/") == name)
+		name += sizeof("/dev/") - 1;
+
+	char *full_description = malloc(strlen(name) + sizeof(" - ") + strlen(description));
+	if (full_description == NULL)
+		return NULL;
+
+	full_description[0] = '\0';
+	if (strstr(description, name) == NULL) {
+		strcat(full_description, name);
+		strcat(full_description, " - ");
+	}
+	strcat(full_description, description);
+	return full_description;
+}
+
 #endif
