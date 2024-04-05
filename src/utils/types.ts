@@ -33,6 +33,7 @@ export type PopupRequest = {
 
 export type NativeParams = {
 	state: "checking" | "not-installed" | "error" | "outdated" | "connected"
+	platform?: browser.runtime.PlatformInfo
 	error?: any
 	version?: string
 	protocol?: number

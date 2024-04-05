@@ -19,12 +19,17 @@ let nativeParams: NativeParams = {
 	state: "checking",
 }
 
-function setNativeParams(params: NativeParams) {
+async function setNativeParams(params: NativeParams) {
+	params.platform = nativeParams.platform
 	nativeParams = params
 	debugLog("NATIVE", "setNativeParams", params)
 }
 
 async function getNativePort(): Promise<browser.runtime.Port> {
+	if (!nativeParams.platform) {
+		nativeParams.platform = await browser.runtime.getPlatformInfo()
+	}
+
 	if (globalPort != undefined && globalPort.error == null) return globalPort
 
 	const newPort = browser.runtime.connectNative("io.github.kuba2k2.webserial")
@@ -40,7 +45,7 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 	newPort.postMessage(pingRequest)
 
 	// update native params
-	setNativeParams({ state: "checking" })
+	await setNativeParams({ state: "checking" })
 
 	globalPort = await new Promise((resolve, reject) => {
 		let isOutdated = false
@@ -60,7 +65,11 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 					const error = `Native protocol incompatible: expected v${NATIVE_PROTOCOL}, found v${protocol}`
 					debugLog("NATIVE", "onMessage", error)
 
-					setNativeParams({ state: "outdated", version, protocol })
+					await setNativeParams({
+						state: "outdated",
+						version,
+						protocol,
+					})
 					isOutdated = true
 					newPort.disconnect()
 
@@ -73,7 +82,7 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 					"onMessage",
 					`Connection successful: native v${version} @ port ${wsPort}`
 				)
-				setNativeParams({
+				await setNativeParams({
 					state: "connected",
 					version,
 					protocol,
@@ -93,18 +102,26 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 				)
 		})
 
-		newPort.onDisconnect.addListener(async (port) => {
+		const onDisconnect = async (port: browser.runtime.Port) => {
 			debugLog("NATIVE", "onDisconnect", "Disconnected:", port.error)
 			if (isOutdated) return
 			globalPort = null
 
 			const error = `${port.error}`
 			if (error.includes("No such native application"))
-				setNativeParams({ state: "not-installed", error: port.error })
-			else setNativeParams({ state: "error", error: port.error })
+				await setNativeParams({
+					state: "not-installed",
+					error: port.error,
+				})
+			else await setNativeParams({ state: "error", error: port.error })
 
 			reject(port.error)
-		})
+		}
+		if (newPort.error !== null) {
+			onDisconnect(newPort)
+		} else {
+			newPort.onDisconnect.addListener(onDisconnect)
+		}
 	})
 
 	return globalPort

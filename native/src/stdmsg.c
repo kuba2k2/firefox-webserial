@@ -9,6 +9,7 @@ static void stdmsg_write(cJSON *message) {
 	uint32_t len = strlen(json);
 	fwrite(&len, sizeof(uint32_t), 1, stdout);
 	fwrite(json, sizeof(char), len, stdout);
+	fflush(stdout);
 	free(json);
 }
 
