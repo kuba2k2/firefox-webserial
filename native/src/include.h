@@ -15,7 +15,8 @@
 #include <uuid4.h>
 #include <ws.h>
 
-#include "config.h"
+#include "webserial_config.h"
+
 #include "serial.h"
 #include "stdmsg.h"
 #include "websocket.h"
