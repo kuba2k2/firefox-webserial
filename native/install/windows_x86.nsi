@@ -1,5 +1,5 @@
 !define NAME "WebSerial for Firefox"
-!define VERSION "0.3.0"
+!define VERSION "0.3.1"
 !define NATIVEID "io.github.kuba2k2.webserial"
 !define REGUNINST "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\firefox-webserial"
 

@@ -2,6 +2,6 @@
 
 #pragma once
 
-#define NATIVE_VERSION	"0.3.0"
+#define NATIVE_VERSION	"0.3.1"
 #define NATIVE_PROTOCOL 2
 #define WEBSOCKET_PORT	23290
