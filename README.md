@@ -1,0 +1,65 @@
+# WebSerial for Firefox
+
+WebSerial API Polyfill for Mozilla Firefox browser
+
+## Introduction
+
+This add-on allows to use the WebSerial API in Firefox.
+
+It uses a native application to communicate with serial ports.
+
+**NOTE:** Currently, the add-on only works on Windows.
+
+## Installation
+
+The add-on is available for download from Mozilla Addons:
+[WebSerial for Firefox](https://addons.mozilla.org/pl/firefox/addon/webserial-for-firefox/).
+
+The native application needs to be installed on the computer first. The GUI will offer to download and install the
+native application when you first try to open a serial port.
+
+## Usage
+
+Some applications that can work on Firefox with this add-on:
+
+- [Spacehuhn Serial Terminal](https://serial.huhn.me/)
+- [Google Chrome Labs Serial Terminal](https://googlechromelabs.github.io/serial-terminal/)
+- [ESPWebTool by Spacehuhn](https://esp.huhn.me/)
+- [ESP Tool by Espressif](https://espressif.github.io/esptool-js/)
+- [ESPHome Web](https://web.esphome.io/)
+- [ESP Web Tools by ESPHome](https://esphome.github.io/esp-web-tools/)
+
+## Debugging
+
+To view logs produced by the extension for debugging purposes:
+
+- Open [about:debugging](about:debugging), click `This Firefox`
+- Find `WebSerial for Firefox`, click `Inspect`
+- Type in the console: `window.wsdebug = true`
+- Go to a website of choice, try connecting to a serial port - the console should show extension logs.
+
+## License
+
+```
+MIT License
+
+Copyright (c) 2023 Kuba Szczodrzyński
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
