@@ -8,15 +8,37 @@ This add-on allows to use the WebSerial API in Firefox.
 
 It uses a native application to communicate with serial ports.
 
-**NOTE:** Currently, the add-on only works on Windows.
+**NOTE:** Currently, the add-on only works on Windows and Linux (x86-64).
 
 ## Installation
 
 The add-on is available for download from Mozilla Addons:
 [WebSerial for Firefox](https://addons.mozilla.org/pl/firefox/addon/webserial-for-firefox/).
 
-The native application needs to be installed on the computer first. The GUI will offer to download and install the
+The native application needs to be installed on the computer first. The GUI will offer to download the
 native application when you first try to open a serial port.
+
+### Installation on Windows
+
+The .exe file is an installer - just open it and install the native application.
+
+### Installation on Linux
+
+Put the downloaded file in `~/.mozilla/native-messaging-hosts`, rename it to just `firefox-webserial`.
+
+Create a file named `io.github.kuba2k2.webserial.json` in the same directory, with this content:
+
+```json
+{
+	"name": "io.github.kuba2k2.webserial",
+	"description": "WebSerial for Firefox",
+	"path": "/home/USER/.mozilla/native-messaging-hosts/firefox-webserial",
+	"type": "stdio",
+	"allowed_extensions": ["webserial@kuba2k2.github.io"]
+}
+```
+
+Adjust `/home/USER` to match your username.
 
 ## Usage
 
