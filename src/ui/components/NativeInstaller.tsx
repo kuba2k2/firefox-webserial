@@ -7,6 +7,49 @@ const Container = styled.div`
 	text-align: center;
 `
 
+type InstallerOs = {
+	name: string
+	arch: { [arch in browser.runtime.PlatformArch]?: InstallerArch }
+}
+
+type InstallerArch = {
+	file: string
+	isInstaller?: boolean
+}
+
+const installers: { [os in browser.runtime.PlatformOs]?: InstallerOs } = {
+	win: {
+		name: "Windows",
+		arch: {
+			"x86-32": {
+				file: "firefox-webserial-vVERSION.exe",
+				isInstaller: true,
+			},
+			"x86-64": {
+				file: "firefox-webserial-vVERSION.exe",
+				isInstaller: true,
+			},
+		},
+	},
+	linux: {
+		name: "Linux",
+		arch: {
+			// "x86-32": {
+			// 	file: "firefox-webserial-linux-x86-32",
+			// },
+			"x86-64": {
+				file: "firefox-webserial-linux-x86-64",
+			},
+			// "arm": {
+			// 	file: "firefox-webserial-linux-arm",
+			// },
+			// "aarch64": {
+			// 	file: "firefox-webserial-linux-aarch64",
+			// },
+		},
+	},
+}
+
 export class NativeInstaller extends React.Component<NativeParams> {
 	handleDownloadClick() {
 		const onBlur = document.onblur
@@ -18,8 +61,44 @@ export class NativeInstaller extends React.Component<NativeParams> {
 	}
 
 	render() {
+		const os = installers[this.props.platform.os]
+		const arch = os?.arch[this.props.platform.arch]
+
+		if (!arch) {
+			return (
+				<Container>
+					<h4>Native add-on not available</h4>
+
+					<p>
+						The native application is not available on your
+						operating system.
+					</p>
+
+					<p>
+						Your OS is:{" "}
+						<code>
+							{this.props.platform.os}, {this.props.platform.arch}
+						</code>
+					</p>
+
+					<p>
+						Please{" "}
+						<a
+							href="https://github.com/kuba2k2/firefox-webserial"
+							target="_blank"
+						>
+							report the issue on GitHub
+						</a>
+						.
+					</p>
+				</Container>
+			)
+		}
+
 		const version = browser.runtime.getManifest().version
-		const url = browser.runtime.getURL(`firefox-webserial-v${version}.exe`)
+		const url = browser.runtime.getURL(
+			arch.file.replace("VERSION", version)
+		)
 		return (
 			<Container>
 				{this.props.state == "not-installed" && (
@@ -55,11 +134,31 @@ export class NativeInstaller extends React.Component<NativeParams> {
 				<p>
 					Press the button below to download the latest version of the
 					native application.
-					<br />
-					Then, open the downloaded file and install it.
 				</p>
 
-				<a href={url} onClick={this.handleDownloadClick}>
+				{arch.isInstaller && (
+					<p>Then, open the downloaded file and install it.</p>
+				)}
+				{!arch.isInstaller && (
+					<p>
+						Then, follow the instructions in the{" "}
+						<a
+							href="https://github.com/kuba2k2/firefox-webserial"
+							target="_blank"
+						>
+							add-on README page
+						</a>
+						.
+					</p>
+				)}
+
+				<a
+					href={url}
+					download={
+						arch.isInstaller ? arch.file : "firefox-webserial"
+					}
+					onClick={this.handleDownloadClick}
+				>
 					<Button text="Download" />
 				</a>
 			</Container>

@@ -20,14 +20,16 @@ let nativeParams: NativeParams = {
 }
 
 async function setNativeParams(params: NativeParams) {
+	params.platform = nativeParams.platform
 	nativeParams = params
-	if (!nativeParams.platform) {
-		nativeParams.platform = await browser.runtime.getPlatformInfo()
-	}
 	debugLog("NATIVE", "setNativeParams", params)
 }
 
 async function getNativePort(): Promise<browser.runtime.Port> {
+	if (!nativeParams.platform) {
+		nativeParams.platform = await browser.runtime.getPlatformInfo()
+	}
+
 	if (globalPort != undefined && globalPort.error == null) return globalPort
 
 	const newPort = browser.runtime.connectNative("io.github.kuba2k2.webserial")
@@ -100,7 +102,7 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 				)
 		})
 
-		newPort.onDisconnect.addListener(async (port) => {
+		const onDisconnect = async (port: browser.runtime.Port) => {
 			debugLog("NATIVE", "onDisconnect", "Disconnected:", port.error)
 			if (isOutdated) return
 			globalPort = null
@@ -114,7 +116,12 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 			else await setNativeParams({ state: "error", error: port.error })
 
 			reject(port.error)
-		})
+		}
+		if (newPort.error !== null) {
+			onDisconnect(newPort)
+		} else {
+			newPort.onDisconnect.addListener(onDisconnect)
+		}
 	})
 
 	return globalPort
