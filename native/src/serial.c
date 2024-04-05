@@ -28,7 +28,8 @@ cJSON *serial_list_ports_json() {
 			goto end;
 
 		char *id = serial_port_get_id(port);
-		serial_port_fix_details(port, id);
+		if (serial_port_fix_details != NULL)
+			serial_port_fix_details(port, id);
 		cJSON_AddStringToObject(item, "id", id);
 		free(id);
 
