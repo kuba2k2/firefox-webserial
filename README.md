@@ -52,6 +52,7 @@ Some applications that can work on Firefox with this add-on:
 - [ESP Tool by Espressif](https://espressif.github.io/esptool-js/)
 - [ESPHome Web](https://web.esphome.io/)
 - [ESP Web Tools by ESPHome](https://esphome.github.io/esp-web-tools/)
+- [NinjaTerm by Geoffrey Hunter](https://ninjaterm.mbedded.ninja/)
 
 ## Debugging
 
