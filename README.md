@@ -24,6 +24,14 @@ The .exe file is an installer - just open it and install the native application.
 
 ### Installation on Linux
 
+Run script:
+
+```sh
+curl -s -L https://raw.githubusercontent.com/kuba2k2/firefox-webserial/master/native/install/linux_x86_64.sh | bash
+```
+
+#### or install manually
+
 1. Put the downloaded file in `~/.mozilla/native-messaging-hosts`
 2. Rename it to just `firefox-webserial`.
 3. Make it executable: `chmod +x ~/.mozilla/native-messaging-hosts/firefox-webserial`.
