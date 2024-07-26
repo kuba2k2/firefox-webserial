@@ -26,8 +26,9 @@ The .exe file is an installer - just open it and install the native application.
 
 Run script:
 
-`curl -s -L https://raw.githubusercontent.com/kuba2k2/firefox-webserial/master/native/install/linux_x86_64.sh | bash`
-`
+```sh
+curl -s -L https://raw.githubusercontent.com/kuba2k2/firefox-webserial/master/native/install/linux_x86_64.sh | bash
+```
 
 #### or install manually
 
