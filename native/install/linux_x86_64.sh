@@ -1,5 +1,6 @@
 #!/bin/bash
 
+mkdir -p ~/.mozilla/native-messaging-hosts
 curl -L -o ~/.mozilla/native-messaging-hosts/firefox-webserial https://github.com/kuba2k2/firefox-webserial/releases/latest/download/firefox-webserial-linux-x86-64
 chmod +x ~/.mozilla/native-messaging-hosts/firefox-webserial
 cat > ~/.mozilla/native-messaging-hosts/io.github.kuba2k2.webserial.json <<EOL
