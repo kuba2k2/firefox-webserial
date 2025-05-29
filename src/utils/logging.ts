@@ -1,5 +1,9 @@
 type ModuleType = "SERIAL" | "NATIVE" | "SOCKET" | "STREAM"
 
+if (process.env.DEBUG === "true")
+	// @ts-ignore
+	window.wsdebug = true
+
 // [log, rx, tx]
 const colors: Record<ModuleType, [string, string, string]> = {
 	SERIAL: ["#C62817", "#C62817", "#C62817"],
@@ -17,7 +21,7 @@ function buf2hex(data: Uint8Array) {
 }
 
 function log(...args: any[]) {
-	if ("wsdebug" in window) {
+	if ("wsdebug" in window && window["wsdebug"] === true) {
 		console.log(...args)
 	}
 }

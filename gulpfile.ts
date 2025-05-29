@@ -15,6 +15,9 @@ function tsifyBabelify(b: BrowserifyObject, opts: { debug: boolean }) {
 		extensions: [".ts", ".tsx"],
 		sourceMaps: opts.debug,
 	})
+	b.transform("envify", {
+		DEBUG: opts.debug ? "true" : "false",
+	})
 }
 
 function css(debug?: boolean) {
