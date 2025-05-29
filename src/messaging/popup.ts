@@ -24,7 +24,7 @@ export async function sendToPopup(message: PopupRequest): Promise<any> {
 		top: anchor.top,
 		left: anchor.left,
 		width: 400,
-		height: 400,
+		height: 450,
 		allowScriptsToClose: true,
 	})
 

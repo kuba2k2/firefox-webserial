@@ -7,10 +7,29 @@ export type CommonProps = {
 	reject: (reason?: any) => void
 } & PopupRequest
 
+export const MainContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+`
+
 export const MessageContainer = styled.div`
+	flex: 0 0 auto;
+	margin: 0 12px;
 	position: relative;
 	min-height: 40px;
 	padding-right: 56px;
+`
+
+export const MessageDivider = styled.hr`
+	height: 2px;
+	margin: 8px 12px 0;
+`
+
+export const ListContainer = styled.div`
+	flex: 1 1 auto;
+	overflow: auto;
+	padding: 8px 12px;
 `
 
 export const ReloadButton = styled(Button)`
@@ -22,10 +41,7 @@ export const ReloadButton = styled(Button)`
 
 export const ButtonContainer = styled.div`
 	display: flex;
-	position: absolute;
-	bottom: 12px;
-	left: 12px;
-	right: 12px;
+	padding: 12px;
 `
 
 export const ButtonSpacer = styled.span`

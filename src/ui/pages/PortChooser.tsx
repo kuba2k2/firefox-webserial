@@ -7,7 +7,10 @@ import {
 	ButtonMessage,
 	ButtonSpacer,
 	CommonProps,
+	ListContainer,
+	MainContainer,
 	MessageContainer,
+	MessageDivider,
 	ReloadButton,
 } from "../components/Common"
 import { NativeInfo } from "../components/NativeInfo"
@@ -80,7 +83,7 @@ export class PortChooser extends React.Component<
 		}
 
 		return (
-			<div>
+			<MainContainer>
 				<MessageContainer>
 					<h4>{hostname ?? "A website"}</h4>
 					<small>
@@ -89,34 +92,36 @@ export class PortChooser extends React.Component<
 					<ReloadButton icon="reload" onClick={this.handleRefresh} />
 				</MessageContainer>
 
-				<hr />
+				<MessageDivider />
 
-				{!this.state.params &&
-					!this.state.ports &&
-					!this.state.error && (
-						<small>Looking for serial ports...</small>
-					)}
-				{this.state.params && !this.state.ports && (
-					<NativeInstaller {...this.state.params} />
-				)}
-				{this.state.ports && (
-					<List
-						items={this.state.ports.map(
-							(port) => port.description || port.name
+				<ListContainer>
+					{!this.state.params &&
+						!this.state.ports &&
+						!this.state.error && (
+							<small>Looking for serial ports...</small>
 						)}
-						active={this.state.active}
-						onClick={this.handleItemClick}
-					/>
-				)}
-				{this.state.ports && this.state.ports.length == 0 && (
-					<small>No serial ports found</small>
-				)}
-				{this.state.error && (
-					<small>
-						Failed to enumerate serial ports:{" "}
-						{`${this.state.error}`}
-					</small>
-				)}
+					{this.state.params && !this.state.ports && (
+						<NativeInstaller {...this.state.params} />
+					)}
+					{this.state.ports && (
+						<List
+							items={this.state.ports.map(
+								(port) => port.description || port.name
+							)}
+							active={this.state.active}
+							onClick={this.handleItemClick}
+						/>
+					)}
+					{this.state.ports && this.state.ports.length == 0 && (
+						<small>No serial ports found</small>
+					)}
+					{this.state.error && (
+						<small>
+							Failed to enumerate serial ports:{" "}
+							{`${this.state.error}`}
+						</small>
+					)}
+				</ListContainer>
 
 				<ButtonContainer>
 					<ButtonMessage>
@@ -135,7 +140,7 @@ export class PortChooser extends React.Component<
 						onClick={this.handleOkClick}
 					/>
 				</ButtonContainer>
-			</div>
+			</MainContainer>
 		)
 	}
 }

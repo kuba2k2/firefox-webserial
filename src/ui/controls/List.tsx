@@ -3,8 +3,8 @@ import styled from "styled-components"
 
 const Container = styled.ul`
 	list-style-type: none;
+	margin: -8px -8px;
 	padding: 0;
-	margin: 0 -8px;
 `
 
 const Item = styled.li<{ $active: boolean }>`
