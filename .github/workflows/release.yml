@@ -33,14 +33,14 @@ jobs:
             pio-env: windows_x86
             post-build: ""
             output-bin: firefox-webserial.exe
-            output-artifact: firefox-webserial-windows_x86
+            output-artifact: firefox-webserial-raw-native-windows-x86
           - runs-on: ubuntu-latest
             pio-env: linux_x86_64
             post-build: |
               cd .pio/build/linux_x86_64/
               cp firefox-webserial firefox-webserial-linux-x86-64
             output-bin: firefox-webserial-linux-x86-64
-            output-artifact: firefox-webserial-build-pio
+            output-artifact: firefox-webserial-native-linux-x86-64
     with:
       runs-on: ${{ matrix.os.runs-on }}
       project-directory: ./native/
@@ -56,19 +56,41 @@ jobs:
       - build-pio
     uses: kuba2k2/kuba2k2/.github/workflows/build-nsis.yml@master
     with:
-      input-artifact: firefox-webserial-windows_x86
+      input-artifact: firefox-webserial-raw-native-windows-x86
       input-path: native/install/
       script-file: native/install/windows_x86.nsi
       files: |
         native/install/firefox-webserial-v*.exe
-      output-artifact: firefox-webserial-build-nsis
+      output-artifact: firefox-webserial-native-windows-x86
+
+  release-native:
+    name: Publish native application release
+    runs-on: ubuntu-latest
+    needs:
+      - build-pio
+      - build-nsis
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          pattern: firefox-webserial-native-*
+          path: dist
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/firefox-webserial-*
+          fail_on_unmatched_files: true
+          generate_release_notes: true
 
   release-amo:
     name: Publish addons.mozilla.org release
     runs-on: ubuntu-latest
     needs:
       - build-node
-      - build-nsis
     permissions:
       contents: write
     steps:
@@ -101,7 +123,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            src/firefox-webserial-*
             ${{ steps.sign.outputs.target }}
           fail_on_unmatched_files: false
           generate_release_notes: true

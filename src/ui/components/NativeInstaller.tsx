@@ -17,6 +17,11 @@ type InstallerArch = {
 	isInstaller?: boolean
 }
 
+const releaseInfoUrl =
+	"https://github.com/kuba2k2/firefox-webserial/releases/tag/vVERSION"
+const releaseDownloadUrl =
+	"https://github.com/kuba2k2/firefox-webserial/releases/download/vVERSION/"
+
 const installers: { [os in browser.runtime.PlatformOs]?: InstallerOs } = {
 	win: {
 		name: "Windows",
@@ -96,9 +101,11 @@ export class NativeInstaller extends React.Component<NativeParams> {
 		}
 
 		const version = browser.runtime.getManifest().version
-		const url = browser.runtime.getURL(
+		const infoUrl = releaseInfoUrl.replace("VERSION", version)
+		const downloadUrl =
+			releaseDownloadUrl.replace("VERSION", version) +
 			arch.file.replace("VERSION", version)
-		)
+
 		return (
 			<Container>
 				{this.props.state == "not-installed" && (
@@ -123,17 +130,13 @@ export class NativeInstaller extends React.Component<NativeParams> {
 				)}
 				{this.props.state == "error" && (
 					<p>
-						There was an error while communicating with the native
-						application. Refer to the extension log console for more
-						information.
-						<br />
-						You can also try reinstalling the application.
+						The add-on couldn't communicate with the native
+						application, so it has to be reinstalled.
 					</p>
 				)}
 
 				<p>
-					Press the button below to download the latest version of the
-					native application.
+					Press the button below to download the native application.
 				</p>
 
 				{arch.isInstaller && (
@@ -153,13 +156,17 @@ export class NativeInstaller extends React.Component<NativeParams> {
 				)}
 
 				<a
-					href={url}
+					href={downloadUrl}
 					download={
 						arch.isInstaller ? arch.file : "firefox-webserial"
 					}
 					onClick={this.handleDownloadClick}
 				>
 					<Button text="Download" />
+				</a>
+				<br />
+				<a href={infoUrl} target={"_blank"} style={{ opacity: 0.4 }}>
+					See all available downloads
 				</a>
 			</Container>
 		)
