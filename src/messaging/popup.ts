@@ -8,7 +8,7 @@ const onRemovedListener = async (windowId: number) => {
 	if (!(windowId in windows)) return
 	const id = windows[windowId]
 	delete windows[windowId]
-	await rejectPromise(id, new Error("Popup has been closed"))
+	await rejectPromise(id, new Error("No port selected by the user."))
 }
 
 export async function sendToPopup(message: PopupRequest): Promise<any> {

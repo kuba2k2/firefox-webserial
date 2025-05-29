@@ -58,7 +58,7 @@ export class PortChooser extends React.Component<
 	}
 
 	handleCancelClick() {
-		this.props.reject(new Error("Cancelled by the user"))
+		this.props.reject(new Error("No port selected by the user."))
 	}
 
 	handleOkClick() {

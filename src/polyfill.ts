@@ -264,13 +264,30 @@ class Serial extends EventTarget {
 	onconnect: EventListener
 	ondisconnect: EventListener
 
+	private async translateError<T>(promise: Promise<T>): Promise<T> {
+		try {
+			return await promise
+		} catch (e) {
+			const message = (e as Error).message
+			let name = "WebSerialError"
+			switch (message) {
+				case "No port selected by the user.":
+					name = "NotFoundError"
+					break
+			}
+			throw new DOMException(message, name)
+		}
+	}
+
 	async getPorts(): Promise<SerialPort[]> {
-		const ports = await WebSerialPolyfill.getPorts()
+		const ports = await this.translateError(WebSerialPolyfill.getPorts())
 		return ports.map((port) => new SerialPort(port))
 	}
 
 	async requestPort(options?: SerialPortRequestOptions): Promise<SerialPort> {
-		const port = await WebSerialPolyfill.requestPort(options)
+		const port = await this.translateError(
+			WebSerialPolyfill.requestPort(options)
+		)
 		return new SerialPort(port)
 	}
 }
