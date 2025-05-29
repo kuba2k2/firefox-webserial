@@ -32,6 +32,7 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 
 	if (globalPort != undefined && globalPort.error == null) return globalPort
 
+	debugLog("NATIVE", "getNativePort", "Connecting to native...")
 	const newPort = browser.runtime.connectNative("io.github.kuba2k2.webserial")
 
 	// clear local authKey cache, as the native app is starting fresh
@@ -42,7 +43,13 @@ async function getNativePort(): Promise<browser.runtime.Port> {
 		action: "ping",
 		id: v4(),
 	}
-	newPort.postMessage(pingRequest)
+	try {
+		newPort.postMessage(pingRequest)
+	} catch (e) {
+		debugLog("NATIVE", "getNativePort", e)
+		await setNativeParams({ state: "error" })
+		throw e
+	}
 
 	// update native params
 	await setNativeParams({ state: "checking" })
