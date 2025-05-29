@@ -293,5 +293,8 @@ class Serial extends EventTarget {
 // copy functions instead of creating a new object,
 // so that references to navigator.serial are always valid
 const serial = new Serial()
+navigator.serial.addEventListener = serial.addEventListener.bind(serial)
+navigator.serial.dispatchEvent = serial.dispatchEvent.bind(serial)
 navigator.serial.getPorts = serial.getPorts.bind(serial)
+navigator.serial.removeEventListener = serial.removeEventListener.bind(serial)
 navigator.serial.requestPort = serial.requestPort.bind(serial)

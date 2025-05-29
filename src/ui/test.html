@@ -7,6 +7,7 @@
 </head>
 
 <body>
+  <button onclick="getPorts()">await navigator.serial.getPorts()</button>
   <button onclick="requestPort()">port = await navigator.serial.requestPort()</button>
   <button onclick="openPort()">await port.open({baudRate: 115200})</button>
   <button onclick="closePort()">await port.close()</button>
@@ -26,8 +27,31 @@
   <button onclick="rread()">await reader.read()</button>
 
   <script>
+    navigator.serial.addEventListener("connect", (e) => {
+      console.log("navigator.serial -> connect", e.target)
+    })
+    navigator.serial.addEventListener("disconnect", (e) => {
+      console.log("navigator.serial -> disconnect", e.target)
+    })
+    navigator.serial.onconnect = (e) => {
+      console.log("navigator.serial -> onconnect", e.target)
+    }
+    navigator.serial.ondisconnect = (e) => {
+      console.log("navigator.serial -> ondisconnect", e.target)
+    }
+
+    async function getPorts() {
+      console.log(await navigator.serial.getPorts())
+    }
+
     async function requestPort() {
       console.log(window.port = await navigator.serial.requestPort())
+      window.port.addEventListener("connect", (e) => {
+        console.log("window.port -> connect", e.target)
+      })
+      window.port.addEventListener("disconnect", (e) => {
+        console.log("window.port -> disconnect", e.target)
+      })
     }
 
     async function openPort() {
