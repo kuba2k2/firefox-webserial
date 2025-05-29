@@ -16,7 +16,7 @@ jobs:
         dist/
         manifest.json
         LICENSE
-      output-artifact: firefox-webserial
+      output-artifact: firefox-webserial-build-node
 
   lint-clang:
     name: Run Clang lint
@@ -40,7 +40,7 @@ jobs:
               cd .pio/build/linux_x86_64/
               cp firefox-webserial firefox-webserial-linux-x86-64
             output-bin: firefox-webserial-linux-x86-64
-            output-artifact: firefox-webserial
+            output-artifact: firefox-webserial-build-pio
     with:
       runs-on: ${{ matrix.os.runs-on }}
       project-directory: ./native/
@@ -61,7 +61,7 @@ jobs:
       script-file: native/install/windows_x86.nsi
       files: |
         native/install/firefox-webserial-v*.exe
-      output-artifact: firefox-webserial
+      output-artifact: firefox-webserial-build-nsis
 
   release-amo:
     name: Publish addons.mozilla.org release
@@ -73,9 +73,9 @@ jobs:
       contents: write
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: firefox-webserial
+          pattern: firefox-webserial-build-*
           path: src
 
       - name: Build Firefox extension
