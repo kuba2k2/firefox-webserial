@@ -21,8 +21,6 @@ export class SerialPort extends EventTarget {
 	private outputSignals_: SerialOutputSignals
 	private inputSignals_: SerialInputSignals
 
-	private onTransportDisconnectBound: () => void
-
 	public constructor(port: SerialPortData) {
 		super()
 		this.port_ = port
@@ -41,7 +39,7 @@ export class SerialPort extends EventTarget {
 			ringIndicator: false,
 			dataSetReady: false,
 		}
-		this.onTransportDisconnectBound = this.onTransportDisconnect.bind(this)
+		this.onTransportDisconnect = this.onTransportDisconnect.bind(this)
 	}
 
 	private get state_(): "closed" | "opening" | "opened" {
@@ -130,7 +128,7 @@ export class SerialPort extends EventTarget {
 			this.transport_ = new SerialWebSocket()
 			this.transport_.addEventListener(
 				"disconnect",
-				this.onTransportDisconnectBound
+				this.onTransportDisconnect
 			)
 			await this.transport_.connect()
 			await this.transport_.send(
@@ -199,7 +197,7 @@ export class SerialPort extends EventTarget {
 		// remove ondisconnect listener, as it would call close() again
 		this.transport_.removeEventListener(
 			"disconnect",
-			this.onTransportDisconnectBound
+			this.onTransportDisconnect
 		)
 
 		debugLog("SERIAL", "close", "Disconnecting transport...")
