@@ -15,7 +15,7 @@ export class SerialWebSocket extends EventTarget implements SerialTransport {
 	}
 
 	async connect(): Promise<void> {
-		debugLog("SOCKET", "state", "Connecting")
+		debugLog("SOCKET", "state", "Connecting socket")
 
 		if (this.connected) await this.disconnect()
 
@@ -31,7 +31,7 @@ export class SerialWebSocket extends EventTarget implements SerialTransport {
 			this.ws_.onerror = reject
 		})
 
-		debugLog("SOCKET", "state", "Connected")
+		debugLog("SOCKET", "state", "Connected socket")
 		this.ws_.onerror = () => {
 			debugLog("SOCKET", "state", "WS error")
 			this.disconnect()
@@ -46,9 +46,13 @@ export class SerialWebSocket extends EventTarget implements SerialTransport {
 		if (this.reject_) this.reject_(new Error("Disconnecting"))
 		this.dispatchEvent(new Event("disconnect"))
 		if (this.ws_) {
+			debugLog("SOCKET", "state", "Disconnecting socket...")
+			// remove onclose and onerror listeners, as they would call disconnect() again
+			this.ws_.onclose = null
+			this.ws_.onerror = null
 			this.ws_.close()
 			this.ws_ = null
-			debugLog("SOCKET", "state", "Disconnected")
+			debugLog("SOCKET", "state", "Disconnected socket")
 		}
 		this.clearPromise()
 	}

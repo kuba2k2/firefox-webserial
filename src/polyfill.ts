@@ -21,6 +21,8 @@ export class SerialPort extends EventTarget {
 	private outputSignals_: SerialOutputSignals
 	private inputSignals_: SerialInputSignals
 
+	private onTransportDisconnectBound: () => void
+
 	public constructor(port: SerialPortData) {
 		super()
 		this.port_ = port
@@ -39,6 +41,7 @@ export class SerialPort extends EventTarget {
 			ringIndicator: false,
 			dataSetReady: false,
 		}
+		this.onTransportDisconnectBound = this.onTransportDisconnect.bind(this)
 	}
 
 	private get state_(): "closed" | "opening" | "opened" {
@@ -114,7 +117,7 @@ export class SerialPort extends EventTarget {
 			)
 
 		// close the socket if it's open somehow
-		await catchIgnore(this.close())
+		if (this.transport_ !== null) await catchIgnore(this.close())
 
 		// assume 8-N-1 as defaults
 		if (options.dataBits === undefined) options.dataBits = 8
@@ -125,9 +128,10 @@ export class SerialPort extends EventTarget {
 			// connect & open the port
 			this.options_ = options
 			this.transport_ = new SerialWebSocket()
-			this.transport_.addEventListener("disconnect", async () => {
-				await catchIgnore(this.close())
-			})
+			this.transport_.addEventListener(
+				"disconnect",
+				this.onTransportDisconnectBound
+			)
 			await this.transport_.connect()
 			await this.transport_.send(
 				pack(`<B${this.port_.authKey.length + 1}s`, [
@@ -160,6 +164,10 @@ export class SerialPort extends EventTarget {
 		}
 	}
 
+	private async onTransportDisconnect(): Promise<void> {
+		if (this.transport_ !== null) await catchIgnore(this.close())
+	}
+
 	public async close(): Promise<void> {
 		debugLog("SERIAL", "close", "transport:", this.transport_)
 		if (this.transport_ === null)
@@ -188,7 +196,15 @@ export class SerialPort extends EventTarget {
 			this.transport_.send(pack("<B", [SerialOpcode.WSM_PORT_CLOSE]))
 		)
 
+		// remove ondisconnect listener, as it would call close() again
+		this.transport_.removeEventListener(
+			"disconnect",
+			this.onTransportDisconnectBound
+		)
+
+		debugLog("SERIAL", "close", "Disconnecting transport...")
 		await this.transport_.disconnect()
+		debugLog("SERIAL", "close", "Disconnected transport")
 		this.transport_ = null
 		this.options_ = null
 	}
