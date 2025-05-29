@@ -290,5 +290,8 @@ class Serial extends EventTarget {
 	}
 }
 
-// @ts-ignore
-navigator.serial = new Serial()
+// copy functions instead of creating a new object,
+// so that references to navigator.serial are always valid
+const serial = new Serial()
+navigator.serial.getPorts = serial.getPorts.bind(serial)
+navigator.serial.requestPort = serial.requestPort.bind(serial)
