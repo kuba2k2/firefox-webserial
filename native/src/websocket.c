@@ -2,10 +2,10 @@
 
 #include "websocket.h"
 
-#define WS_RESPONSE(opc)                                                                                               \
-	do {                                                                                                               \
-		ws_message_opcode_t opcode = opc;                                                                              \
-		ws_sendframe_bin(conn, (const char *)&opcode, 1);                                                              \
+#define WS_RESPONSE(opc)                                  \
+	do {                                                  \
+		ws_message_opcode_t opcode = opc;                 \
+		ws_sendframe_bin(conn, (const char *)&opcode, 1); \
 	} while (0)
 
 void websocket_start() {
