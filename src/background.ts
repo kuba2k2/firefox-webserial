@@ -70,7 +70,15 @@ class MessageHandler {
 	 */
 	async listAvailablePorts({ origin, options }: BackgroundRequest) {
 		const originAuth = await readOriginAuth(origin)
-		const ports = await listPortsNative()
+		const ports = (await listPortsNative()).filter(port => {
+			return !options || !options.filters || options.filters.filter(filter => {
+				return (!filter.usbVendorId || filter.usbVendorId === port.usb?.vid) &&
+					(!filter.usbProductId || filter.usbProductId === port.usb?.pid) &&
+					(!("id" in filter) || filter["id"] === port.id) &&
+					(!("name" in filter) || filter["name"] === port.name) &&
+					(!("transport" in filter) || filter["transport"] === port.transport)
+			}).length > 0
+		})
 		for (const port of ports) {
 			port.isPaired = port.id in originAuth
 		}
