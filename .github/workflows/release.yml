@@ -41,6 +41,13 @@ jobs:
               cp firefox-webserial firefox-webserial-linux-x86-64
             output-bin: firefox-webserial-linux-x86-64
             output-artifact: firefox-webserial-native-linux-x86-64
+          - runs-on: ubuntu-24.04-arm
+            pio-env: native
+            post-build: |
+              cd .pio/build/linux_arm64/
+              cp firefox-webserial firefox-webserial-linux-arm64
+            output-bin: firefox-webserial-linux-arm64
+            output-artifact: firefox-webserial-native-linux-arm64
     with:
       runs-on: ${{ matrix.os.runs-on }}
       project-directory: ./native/
