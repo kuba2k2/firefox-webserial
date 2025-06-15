@@ -43,6 +43,8 @@ jobs:
             output-artifact: firefox-webserial-native-linux-x86-64
           - runs-on: ubuntu-24.04-arm
             pio-env: native
+            pre-build: |
+              apt-get install -y libserialport-dev
             post-build: |
               cd .pio/build/linux_arm64/
               cp firefox-webserial firefox-webserial-linux-arm64
@@ -52,6 +54,7 @@ jobs:
       runs-on: ${{ matrix.os.runs-on }}
       project-directory: ./native/
       args: -e ${{ matrix.os.pio-env }}
+      pre-build: ${{ matrix.os.pre-build }}
       post-build: ${{ matrix.os.post-build }}
       files: |
         native/.pio/build/${{ matrix.os.pio-env }}/${{ matrix.os.output-bin }}
