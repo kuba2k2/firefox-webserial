@@ -46,7 +46,7 @@ jobs:
             pre-build: |
               sudo apt-get install -y libserialport-dev
             post-build: |
-              cd .pio/build/linux_arm64/
+              cd .pio/build/native/
               cp firefox-webserial firefox-webserial-linux-arm64
             output-bin: firefox-webserial-linux-arm64
             output-artifact: firefox-webserial-native-linux-arm64
