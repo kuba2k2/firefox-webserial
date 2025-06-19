@@ -43,8 +43,6 @@ jobs:
             output-artifact: firefox-webserial-native-linux-x86-64
           - runs-on: ubuntu-24.04-arm
             pio-env: native
-            pre-build: |
-              sudo apt-get install -y libserialport-dev
             post-build: |
               cd .pio/build/native/
               cp firefox-webserial firefox-webserial-linux-arm64
