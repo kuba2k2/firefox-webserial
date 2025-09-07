@@ -11,7 +11,11 @@ import {
 	readOriginAuth,
 	writeOriginAuth,
 } from "./utils/auth"
-import { BackgroundRequest } from "./utils/types"
+import {
+	BackgroundRequest,
+	checkPortMatch,
+	ExtendedSerialPortFilter,
+} from "./utils/types"
 
 console.clear()
 
@@ -70,15 +74,14 @@ class MessageHandler {
 	 */
 	async listAvailablePorts({ origin, options }: BackgroundRequest) {
 		const originAuth = await readOriginAuth(origin)
-		const ports = (await listPortsNative()).filter(port => {
-			return !options || !options.filters || options.filters.filter(filter => {
-				return (!filter.usbVendorId || filter.usbVendorId === port.usb?.vid) &&
-					(!filter.usbProductId || filter.usbProductId === port.usb?.pid) &&
-					(!("id" in filter) || filter["id"] === port.id) &&
-					(!("name" in filter) || filter["name"] === port.name) &&
-					(!("transport" in filter) || filter["transport"] === port.transport)
-			}).length > 0
+		const nativePorts = await listPortsNative()
+
+		const ports = nativePorts.filter((port) => {
+			return options!.filters.some((filter: ExtendedSerialPortFilter) =>
+				checkPortMatch(port, filter)
+			)
 		})
+
 		for (const port of ports) {
 			port.isPaired = port.id in originAuth
 		}
