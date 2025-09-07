@@ -23,6 +23,7 @@ export function sleep(milliseconds: number): Promise<void> {
  * @param filter The filter to match against
  * @returns true if the port matches the filter, false otherwise
  */
+
 /**
  * Validates a SerialPortFilter according to Web Serial API specification
  * @param filter The filter to validate
@@ -30,7 +31,7 @@ export function sleep(milliseconds: number): Promise<void> {
  */
 export function validateSerialPortFilter(filter: SerialPortFilter): void {
 	// Rule 1: Mutual exclusivity - Bluetooth and USB filters cannot be combined
-	if (filter.bluetoothServiceClassId) {
+	if (filter.bluetoothServiceClassId !== undefined) {
 		if (filter.usbVendorId !== undefined) {
 			throw new TypeError(
 				"Cannot specify both bluetoothServiceClassId and usbVendorId in the same filter"
@@ -41,7 +42,8 @@ export function validateSerialPortFilter(filter: SerialPortFilter): void {
 				"Cannot specify both bluetoothServiceClassId and usbProductId in the same filter"
 			)
 		}
-		return // Bluetooth filter is valid if it has service class ID
+		// Bluetooth filter is valid if it has service class ID
+		return
 	}
 
 	// Rule 2: USB dependency - If usbProductId is specified, usbVendorId must also be specified
@@ -51,15 +53,9 @@ export function validateSerialPortFilter(filter: SerialPortFilter): void {
 		)
 	}
 
-	// Rule 3: Empty filter validation - usbVendorId is required for USB filters
-	if (
-		filter.usbVendorId === undefined &&
-		filter.usbProductId === undefined &&
-		filter.bluetoothServiceClassId === undefined
-	) {
-		throw new TypeError(
-			"Filter cannot be empty - at least one property must be specified"
-		)
+	// Rule 3: At least one property must be specified for USB filters
+	if (filter.usbVendorId === undefined && filter.usbProductId === undefined) {
+		throw new TypeError("USB filter must specify at least usbVendorId")
 	}
 }
 
