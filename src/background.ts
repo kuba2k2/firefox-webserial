@@ -11,11 +11,8 @@ import {
 	readOriginAuth,
 	writeOriginAuth,
 } from "./utils/auth"
-import {
-	BackgroundRequest,
-	checkPortMatch,
-	ExtendedSerialPortFilter,
-} from "./utils/types"
+import { BackgroundRequest, ExtendedSerialPortFilter } from "./utils/types"
+import { checkPortMatch } from "./utils/utils"
 
 console.clear()
 
@@ -77,7 +74,9 @@ class MessageHandler {
 		const nativePorts = await listPortsNative()
 
 		const ports = nativePorts.filter((port) => {
-			return options!.filters.some((filter: ExtendedSerialPortFilter) =>
+			if (!options.filters) return true
+
+			return options.filters.some((filter: ExtendedSerialPortFilter) =>
 				checkPortMatch(port, filter)
 			)
 		})
