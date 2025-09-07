@@ -11,7 +11,8 @@ import {
 	readOriginAuth,
 	writeOriginAuth,
 } from "./utils/auth"
-import { BackgroundRequest } from "./utils/types"
+import { BackgroundRequest, ExtendedSerialPortFilter } from "./utils/types"
+import { checkPortMatch, validateSerialPortFilters } from "./utils/utils"
 
 console.clear()
 
@@ -54,6 +55,11 @@ class MessageHandler {
 	 * - Page Script (via Content Script)
 	 */
 	async requestPort({ origin, options }: BackgroundRequest) {
+		// Validate filters according to Web Serial API specification
+		if (options?.filters) {
+			validateSerialPortFilters(options.filters)
+		}
+
 		const port = await choosePort(origin, options)
 		await writeOriginAuth(origin, port)
 
@@ -69,8 +75,22 @@ class MessageHandler {
 	 * - Popup Script
 	 */
 	async listAvailablePorts({ origin, options }: BackgroundRequest) {
+		// Validate filters according to Web Serial API specification
+		if (options?.filters) {
+			validateSerialPortFilters(options.filters)
+		}
+
 		const originAuth = await readOriginAuth(origin)
-		const ports = await listPortsNative()
+		const nativePorts = await listPortsNative()
+
+		const ports = nativePorts.filter((port) => {
+			if (!options?.filters) return true
+
+			return options.filters.some((filter: ExtendedSerialPortFilter) =>
+				checkPortMatch(port, filter)
+			)
+		})
+
 		for (const port of ports) {
 			port.isPaired = port.id in originAuth
 		}

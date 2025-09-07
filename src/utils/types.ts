@@ -1,3 +1,18 @@
+// Extended SerialPortFilter type based on Web Serial API specification
+// Standard properties from the spec
+export interface SerialPortFilter {
+	usbVendorId?: number
+	usbProductId?: number
+	bluetoothServiceClassId?: string
+}
+
+// Extended properties for this implementation
+export interface ExtendedSerialPortFilter extends SerialPortFilter {
+	id?: string
+	name?: string
+	transport?: "NATIVE" | "USB" | "BLUETOOTH"
+}
+
 export type BackgroundRequest = {
 	action:
 		| "getNativeParams"
