@@ -8,7 +8,7 @@ This add-on allows to use the WebSerial API in Firefox.
 
 It uses a native application to communicate with serial ports.
 
-**NOTE:** Currently, the add-on only works on Windows and Linux (x86-64).
+**NOTE:** Currently, the add-on works on Windows, Linux (x86-64), and macOS (Intel and Apple Silicon).
 
 ## Installation
 
@@ -49,6 +49,43 @@ curl -s -L https://raw.githubusercontent.com/kuba2k2/firefox-webserial/master/na
 5. Restart the browser and use the extension.
 
 **NOTE:** On Alpine Linux (or other musl-based distros) you will need to have `gcompat` installed.
+
+### Installation on macOS
+
+#### Intel Macs (x86-64)
+
+Run script:
+
+```sh
+curl -s -L https://raw.githubusercontent.com/kuba2k2/firefox-webserial/master/native/install/macos_x86_64.sh | bash
+```
+
+#### Apple Silicon Macs (M1/M2/M3)
+
+Run script:
+
+```sh
+curl -s -L https://raw.githubusercontent.com/kuba2k2/firefox-webserial/master/native/install/macos_arm64.sh | bash
+```
+
+#### or install manually
+
+1. Download the appropriate binary for your Mac architecture from [GitHub Releases](https://github.com/kuba2k2/firefox-webserial/releases).
+2. Put the downloaded file in `~/Library/Application Support/Mozilla/NativeMessagingHosts`
+3. Rename it to just `firefox-webserial`.
+4. Make it executable: `chmod +x ~/Library/Application\ Support/Mozilla/NativeMessagingHosts/firefox-webserial`.
+5. Create a file named `io.github.kuba2k2.webserial.json` in the same directory, with this content:
+	```json
+	{
+		"name": "io.github.kuba2k2.webserial",
+		"description": "WebSerial for Firefox",
+		"path": "/Users/USERNAME/Library/Application Support/Mozilla/NativeMessagingHosts/firefox-webserial",
+		"type": "stdio",
+		"allowed_extensions": ["webserial@kuba2k2.github.io"]
+	}
+	```
+	Adjust `/Users/USERNAME` to match your username.
+6. Restart the browser and use the extension.
 
 ## Usage
 

@@ -68,7 +68,7 @@ class MessageHandler {
 	 * ACCESS:
 	 * - Popup Script
 	 */
-	async listAvailablePorts({ origin, options }: BackgroundRequest) {
+	async listAvailablePorts({ origin, options: _options }: BackgroundRequest) {
 		const originAuth = await readOriginAuth(origin)
 		const ports = await listPortsNative()
 		for (const port of ports) {
