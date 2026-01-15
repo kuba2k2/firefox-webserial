@@ -59,7 +59,7 @@ const installers: { [os in browser.runtime.PlatformOs]?: InstallerOs } = {
 			"x86-64": {
 				file: "firefox-webserial-macos-x86-64",
 			},
-			"aarch64": {
+			aarch64: {
 				file: "firefox-webserial-macos-arm64",
 			},
 		},
