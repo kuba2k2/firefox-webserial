@@ -8,7 +8,7 @@ This add-on allows to use the WebSerial API in Firefox.
 
 It uses a native application to communicate with serial ports.
 
-**NOTE:** Currently, the add-on only works on Windows and Linux (x86-64).
+**NOTE:** Currently, the add-on works on Windows and Linux (x86-64, ARM64).
 
 ## Installation
 
@@ -26,8 +26,14 @@ The .exe file is an installer - just open it and install the native application.
 
 Run script:
 
+For x86-64:
 ```sh
 curl -s -L https://raw.githubusercontent.com/kuba2k2/firefox-webserial/master/native/install/linux_x86_64.sh | bash
+```
+
+For ARM64:
+```sh
+curl -s -L https://raw.githubusercontent.com/kuba2k2/firefox-webserial/master/native/install/linux_arm64.sh | bash
 ```
 
 #### or install manually

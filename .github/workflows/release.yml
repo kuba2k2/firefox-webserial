@@ -41,10 +41,18 @@ jobs:
               cp firefox-webserial firefox-webserial-linux-x86-64
             output-bin: firefox-webserial-linux-x86-64
             output-artifact: firefox-webserial-native-linux-x86-64
+          - runs-on: ubuntu-24.04-arm
+            pio-env: native
+            post-build: |
+              cd .pio/build/native/
+              cp firefox-webserial firefox-webserial-linux-arm64
+            output-bin: firefox-webserial-linux-arm64
+            output-artifact: firefox-webserial-native-linux-arm64
     with:
       runs-on: ${{ matrix.os.runs-on }}
       project-directory: ./native/
       args: -e ${{ matrix.os.pio-env }}
+      pre-build: ${{ matrix.os.pre-build }}
       post-build: ${{ matrix.os.post-build }}
       files: |
         native/.pio/build/${{ matrix.os.pio-env }}/${{ matrix.os.output-bin }}
@@ -63,15 +71,17 @@ jobs:
         native/install/firefox-webserial-v*.exe
       output-artifact: firefox-webserial-native-windows-x86
 
-  release-amo:
-    name: Publish addons.mozilla.org release
+  release:
+    name: Publish GitHub release
     runs-on: ubuntu-latest
     needs:
       - build-node
+      - build-pio
+      - build-nsis
     permissions:
       contents: write
     steps:
-      - name: Download artifact
+      - name: Download Node.js artifact
         uses: actions/download-artifact@v4
         with:
           name: firefox-webserial-build-node
@@ -85,36 +95,7 @@ jobs:
           source: src
           filename: "{name}-{version}.xpi"
 
-      - name: Sign Firefox extension
-        id: sign
-        uses: kewisch/action-web-ext@v1
-        with:
-          cmd: sign
-          source: ${{ steps.build.outputs.target }}
-          channel: listed
-          apiKey: ${{ secrets.AMO_SIGN_KEY }}
-          apiSecret: ${{ secrets.AMO_SIGN_SECRET }}
-          timeout: 900000
-
-      - name: Publish GitHub release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            ${{ steps.sign.outputs.target }}
-          fail_on_unmatched_files: false
-          generate_release_notes: true
-
-  release:
-    name: Publish GitHub release
-    runs-on: ubuntu-latest
-    needs:
-      - build-pio
-      - build-nsis
-      - release-amo
-    permissions:
-      contents: write
-    steps:
-      - name: Download artifact
+      - name: Download native artifacts
         uses: actions/download-artifact@v4
         with:
           pattern: firefox-webserial-native-*
@@ -125,6 +106,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
+            ${{ steps.build.outputs.target }}
             dist/firefox-webserial-*
           fail_on_unmatched_files: true
           generate_release_notes: true
