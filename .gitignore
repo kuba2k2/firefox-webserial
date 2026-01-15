@@ -233,8 +233,3 @@ browserify-cache.json
 .vscode
 *.xpi
 *.zip
-
-# Native build artifacts
-native/firefox-webserial
-native/firefox-webserial-*
-native/build/
