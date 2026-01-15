@@ -41,6 +41,20 @@ jobs:
               cp firefox-webserial firefox-webserial-linux-x86-64
             output-bin: firefox-webserial-linux-x86-64
             output-artifact: firefox-webserial-native-linux-x86-64
+          - runs-on: macos-15
+            pio-env: macos_x86_64
+            post-build: |
+              cd .pio/build/macos_x86_64/
+              cp firefox-webserial firefox-webserial-macos-x86-64
+            output-bin: firefox-webserial-macos-x86-64
+            output-artifact: firefox-webserial-native-macos-x86-64
+          - runs-on: macos-14
+            pio-env: macos_arm64
+            post-build: |
+              cd .pio/build/macos_arm64/
+              cp firefox-webserial firefox-webserial-macos-arm64
+            output-bin: firefox-webserial-macos-arm64
+            output-artifact: firefox-webserial-native-macos-arm64
     with:
       runs-on: ${{ matrix.os.runs-on }}
       project-directory: ./native/

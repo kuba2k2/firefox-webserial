@@ -53,6 +53,17 @@ const installers: { [os in browser.runtime.PlatformOs]?: InstallerOs } = {
 			// },
 		},
 	},
+	mac: {
+		name: "macOS",
+		arch: {
+			"x86-64": {
+				file: "firefox-webserial-macos-x86-64",
+			},
+			aarch64: {
+				file: "firefox-webserial-macos-arm64",
+			},
+		},
+	},
 }
 
 export class NativeInstaller extends React.Component<NativeParams> {
