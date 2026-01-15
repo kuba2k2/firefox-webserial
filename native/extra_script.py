@@ -1,5 +1,6 @@
-Import("env")
 import sys
+
+Import("env")
 
 env.Replace(PROGNAME="firefox-webserial")
 
