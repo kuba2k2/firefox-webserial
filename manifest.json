@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "WebSerial for Firefox",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"browser_specific_settings": {
 		"gecko": {
 			"id": "webserial@kuba2k2.github.io"

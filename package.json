@@ -1,7 +1,7 @@
 {
 	"name": "firefox-webserial",
 	"description": "WebSerial for Firefox",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"author": "kuba2k2",
 	"license": "MIT",
 	"private": true,
