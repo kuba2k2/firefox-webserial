@@ -1,3 +1,34 @@
+
+<div align="right">
+  <details>
+    <summary >🌐 Language</summary>
+    <div>
+      <div align="center">
+        <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=en">English</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=zh-CN">简体中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=zh-TW">繁體中文</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=ja">日本語</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=ko">한국어</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=hi">हिन्दी</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=th">ไทย</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=fr">Français</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=de">Deutsch</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=es">Español</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=it">Italiano</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=ru">Русский</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=pt">Português</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=nl">Nederlands</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=pl">Polski</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=ar">العربية</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=fa">فارسی</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=tr">Türkçe</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=vi">Tiếng Việt</a>
+        | <a href="https://openaitx.github.io/view.html?user=kuba2k2&project=firefox-webserial&lang=id">Bahasa Indonesia</a>
+      </div>
+    </div>
+  </details>
+</div>
+
 # WebSerial for Firefox
 
 WebSerial API Polyfill for Mozilla Firefox browser
