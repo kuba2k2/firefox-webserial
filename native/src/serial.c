@@ -199,6 +199,10 @@ bool serial_open(serial_port_t *serial, ws_cli_conn_t *conn) {
 }
 
 bool serial_close(serial_port_t *serial) {
+	if (serial->thread != 0) {
+		pthread_cancel(serial->thread);
+		serial->thread = 0;
+	}
 	if (serial->event_set != NULL) {
 		sp_free_event_set(serial->event_set);
 		serial->event_set = NULL;
@@ -207,10 +211,6 @@ bool serial_close(serial_port_t *serial) {
 		sp_close(serial->port);
 		sp_free_port(serial->port);
 		serial->port = NULL;
-	}
-	if (serial->thread != 0) {
-		pthread_cancel(serial->thread);
-		serial->thread = 0;
 	}
 	serial->conn = NULL;
 	return true;
