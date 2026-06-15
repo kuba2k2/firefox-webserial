@@ -179,11 +179,35 @@ void *websocket_serial_thread(void *arg) {
 		struct sp_port *port = serial->port;
 		if (port == NULL)
 			goto error;
+
+#ifndef _WIN32
+		struct timespec t1, t2;
+		clock_gettime(CLOCK_MONOTONIC, &t1);
+#endif
 		if (sp_wait(serial->event_set, 1000) != SP_OK)
 			goto error;
+#ifndef _WIN32
+		clock_gettime(CLOCK_MONOTONIC, &t2);
+#endif
+
 		int read = sp_nonblocking_read(port, buf + 1, sizeof(buf) - 1);
-		if (read == 0)
+		if (read == 0) {
+#ifdef _WIN32
+			// On Windows, ReadFile on a disconnected COM port returns an
+			// error (→ sp_nonblocking_read < 0) so we should never reach
+			// here on disconnect. Sleep briefly as a safety net.
+			Sleep(10);
+#else
+			// If sp_wait returned in <100ms with no data, the port
+			// is likely disconnected (POLLHUP immediate return).
+			// Exit to avoid a busy-loop at 100% CPU.
+			long elapsed_ms = (t2.tv_sec - t1.tv_sec) * 1000
+			                + (t2.tv_nsec - t1.tv_nsec) / 1000000;
+			if (elapsed_ms < 100)
+				goto error;
+#endif
 			continue;
+		}
 		if (read < 0)
 			goto error;
 		if (serial->conn == NULL)
